@@ -128,35 +128,83 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-primary text-primary-foreground relative overflow-hidden min-h-screen flex items-center py-20 lg:py-32">
-        {/* Elementos decorativos */}
-        <div className="absolute top-20 left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
-        <div className="absolute bottom-20 right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
+      {/* SECCIÓN 3: MIS PROYECTOS (CON CARRUSEL CONDICIONAL) */}
+            <section id="proyectos" className="bg-primary text-primary-foreground relative overflow-hidden py-20 lg:py-32">
+                {/* Elementos decorativos */}
+                <div className="absolute top-20 left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
+                <div className="absolute bottom-20 right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
 
-        <div className="container mx-auto px-6 sm:px-12 lg:px-20 relative z-10">
-          <div className="max-w-3xl mb-16">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">Mis Proyectos</h2>
-            <p className="text-xl text-primary-foreground/90 leading-relaxed">
-              He trabajado en diversos proyectos que demuestran mi capacidad para crear soluciones digitales completas,
-              desde el diseño hasta la implementación.
-            </p>
-          </div>
+                <div className="container mx-auto px-6 sm:px-12 lg:px-20 relative z-10 w-full">
+                    <div className="max-w-3xl mb-16">
+                        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">Mis Proyectos</h2>
+                        <p className="text-xl text-primary-foreground/90 leading-relaxed">
+                            He trabajado en diversos proyectos que demuestran mi capacidad para crear soluciones digitales completas,
+                            desde el diseño hasta la implementación.
+                        </p>
+                    </div>
 
-          {proyectos.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-primary-foreground/70 text-lg">No hay proyectos disponibles</p>
-            </div>
-          )}
+                    {isLoading ? (
+                        <div className="text-center py-20">
+                            <p className="text-primary-foreground/70 text-lg flex items-center justify-center">
+                                <span className="animate-spin mr-3 border-t-2 border-b-2 border-primary-foreground h-5 w-5 rounded-full"></span>
+                                Cargando proyectos...
+                            </p>
+                        </div>
+                    ) : (
+                        proyectos.length === 0 ? (
+                            <div className="text-center py-20">
+                                <p className="text-primary-foreground/70 text-lg">No hay proyectos disponibles</p>
+                            </div>
+                        ) : isCarouselActive ? (
+                            // ** CARRUSEL (Si hay más de 3 proyectos) **
+                            <div className="relative">
+                                {/* Contenedor de las tarjetas visibles */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {projectsToShow.map((proyecto) => (
+                                        <ProjectCard key={proyecto.idProyecto} proyecto={proyecto} />
+                                    ))}
+                                </div>
 
-          {proyectos.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {proyectos.map((proyecto) => (
-                <ProjectCard key={proyecto.idProyecto} proyecto={proyecto} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+                                {/* Controles de Navegación */}
+                                <div className="flex justify-center mt-12 gap-4">
+                                    <button
+                                        onClick={handlePrev}
+                                        disabled={isPrevDisabled}
+                                        className={`p-3 rounded-full transition-all duration-300 ${
+                                            isPrevDisabled 
+                                                ? 'bg-primary-foreground/20 text-primary/50 cursor-not-allowed' 
+                                                : 'bg-primary-foreground/80 text-primary hover:bg-primary-foreground hover:scale-105 shadow-lg'
+                                        }`}
+                                    >
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </button>
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={isNextDisabled}
+                                        className={`p-3 rounded-full transition-all duration-300 ${
+                                            isNextDisabled 
+                                                ? 'bg-primary-foreground/20 text-primary/50 cursor-not-allowed' 
+                                                : 'bg-primary-foreground/80 text-primary hover:bg-primary-foreground hover:scale-105 shadow-lg'
+                                        }`}
+                                    >
+                                        <ChevronRight className="w-6 h-6" />
+                                    </button>
+                                </div>
+                                <p className="text-center text-sm mt-4 text-primary-foreground/70">
+                                    Mostrando {currentIndex + 1} - {Math.min(currentIndex + CARDS_VISIBLE, proyectos.length)} de {proyectos.length} proyectos
+                                </p>
+                            </div>
+                        ) : (
+                            // ** GRID ESTÁNDAR (Si hay 3 o menos proyectos) **
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {proyectos.map((proyecto) => (
+                                    <ProjectCard key={proyecto.idProyecto} proyecto={proyecto} />
+                                ))}
+                            </div>
+                        )
+                    )}
+                </div>
+            </section>
 
       <section className="bg-background py-20 lg:py-32">
         <div className="container mx-auto px-6 sm:px-12 lg:px-20">
