@@ -32,7 +32,7 @@ export default async function HomePage() {
       <Navbar />
 
       <section className="relative overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-[90vh]">
+        <div className="grid lg:grid-cols-2 min-h-[100vh]">
           {/* Lado izquierdo - Morado */}
           <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative">
             {/* Elementos decorativos */}
