@@ -34,7 +34,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div className="grid lg:grid-cols-2 min-h-[90vh]">
           {/* Lado izquierdo - Morado */}
-          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative">
+          <div className="bd-nuevo text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative" >
             {/* Elementos decorativos */}
             <div className="absolute top-20 right-10 w-20 h-20 border-2 border-primary-foreground/20 rounded-lg rotate-12" />
             <div className="absolute bottom-32 left-10 w-16 h-16">
@@ -47,7 +47,7 @@ export default async function HomePage() {
 
             <div className="relative z-10 max-w-xl">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                Backen
+                Backen y
                 <br />
                 DBA.
               </h1>
@@ -163,7 +163,7 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Construyo & diseño cosas</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Construyo & diseño </h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
                   Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones híbridas.
                 </p>

@@ -26,7 +26,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-semibold tracking-tight">Portfolio</span>
+            <span className="text-xl font-semibold tracking-tight">Aarón Córdova Hernández</span>
           </Link>
 
           <div className="flex items-center gap-3">
