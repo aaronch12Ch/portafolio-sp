@@ -79,7 +79,7 @@ export default function LoginPage() {
           </Button>
         </div>
 
-        <Card className="bg-primary">
+        <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
             <CardDescription>Ingresa tus credenciales para acceder al panel de administración</CardDescription>
