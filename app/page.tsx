@@ -130,8 +130,8 @@ export default async function HomePage() {
 
       <section className="bg-primary text-primary-foreground py-20 lg:py-32 relative overflow-hidden">
         {/* Elementos decorativos */}
-        <div className="absolute top-20 left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
-        <div className="absolute bottom-20 right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
+        <div className="absolute  left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
+        <div className="absolute  right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
 
         <div className="container mx-h-[100vh] px-6 sm:px-12 lg:px-20 relative z-10">
           <div className="max-w-3xl mb-16">
