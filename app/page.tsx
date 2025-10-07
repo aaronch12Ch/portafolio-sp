@@ -47,9 +47,9 @@ export default async function HomePage() {
 
             <div className="relative z-10 max-w-xl">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                Full Stack
+                Backen
                 <br />
-                Developer.
+                DBA.
               </h1>
               <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
                 Construyo productos digitales escalables con experiencias de usuario excepcionales
