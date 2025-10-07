@@ -58,7 +58,7 @@ export default async function HomePage() {
               <div className="flex flex-col sm:flex-row gap-6 text-sm">
                 <div>
                   <p className="font-semibold mb-1">Altamente capacitado en</p>
-                  <p className="text-primary-foreground/80">React, Next.js, TypeScript y Spring Boot</p>
+                  <p className="text-primary-foreground/80">.Net Framework, Next.js, TypeScript y Spring Boot</p>
                 </div>
                 <div>
                   <p className="font-semibold mb-1">Desarrollo frontend y backend</p>
