@@ -168,7 +168,7 @@ export default async function HomePage() {
                   Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones híbridas.
                 </p>
                 <Link
-                  href="/admin"
+                  href="/"
                   className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all"
                 >
                   Ver mi trabajo <ArrowRight className="w-5 h-5" />
