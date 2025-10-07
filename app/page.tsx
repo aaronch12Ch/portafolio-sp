@@ -58,10 +58,10 @@ export default async function HomePage() {
               <div className="flex flex-col sm:flex-row gap-6 text-sm">
                 <div>
                   <p className="font-semibold mb-1">Altamente capacitado en</p>
-                  <p className="text-primary-foreground/80">.Net Framework, Next.js, TypeScript y Spring Boot</p>
+                  <p className="text-primary-foreground/80">.Net Framework, SQL server y Spring Boot</p>
                 </div>
                 <div>
-                  <p className="font-semibold mb-1">Desarrollo frontend y backend</p>
+                  <p className="font-semibold mb-1">Desarrollo base de datos y backend</p>
                   <p className="text-primary-foreground/80">con arquitecturas modernas y escalables</p>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default async function HomePage() {
               <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Construyo & diseño cosas</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Proyectos open source, aplicaciones web y herramientas útiles.
+                  Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones hibrydas.
                 </p>
                 <Link
                   href="/admin"
@@ -176,16 +176,11 @@ export default async function HomePage() {
               </div>
 
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Escribo, a veces</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Me gusta aprender</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Sobre diseño, desarrollo frontend, aprendizaje y más.
+                  Con ganas de aprender y enseñar. Un gran líder que apoya a su equipo y da solución a problemas.
                 </p>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all"
-                >
-                  Leer mis artículos <ArrowRight className="w-5 h-5" />
-                </Link>
+               
               </div>
             </div>
           </div>
@@ -196,7 +191,7 @@ export default async function HomePage() {
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-6 sm:px-12 lg:px-20">
           <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Portfolio. Todos los derechos reservados.
+            © {new Date().getFullYear()} Portfolio. Todos los derechos reservados Aarón Córdova Hernández.
           </p>
         </div>
       </footer>
