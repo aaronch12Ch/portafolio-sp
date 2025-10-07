@@ -34,7 +34,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div className="grid lg:grid-cols-2 min-h-[90vh]">
           {/* Lado izquierdo - Morado */}
-          <div className="bd-nuevo text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative" >
+          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative">
             {/* Elementos decorativos */}
             <div className="absolute top-20 right-10 w-20 h-20 border-2 border-primary-foreground/20 rounded-lg rotate-12" />
             <div className="absolute bottom-32 left-10 w-16 h-16">
