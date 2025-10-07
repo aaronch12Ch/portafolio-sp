@@ -165,7 +165,7 @@ export default async function HomePage() {
               <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Construyo & diseño cosas</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones hibrydas.
+                  Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones híbridas.
                 </p>
                 <Link
                   href="/admin"
