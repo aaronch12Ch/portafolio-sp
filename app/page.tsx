@@ -133,7 +133,7 @@ export default async function HomePage() {
         <div className="absolute top-20 left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
         <div className="absolute bottom-20 right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
 
-        <div className="container mx-auto px-6 sm:px-12 lg:px-20 relative z-10">
+        <div className="container mx-h-[100vh] px-6 sm:px-12 lg:px-20 relative z-10">
           <div className="max-w-3xl mb-16">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">Mis Proyectos</h2>
             <p className="text-xl text-primary-foreground/90 leading-relaxed">
