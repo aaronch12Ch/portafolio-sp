@@ -25,7 +25,7 @@
   --muted-foreground: oklch(0.556 0 0);
   
   /* VERDE LIMA/AMARILLO VIBRANTE (H: 110) - Tono de acento */
-  --accent: oklch(0.5 0.2 110);
+  --accent: rgb(204, 243, 129);
   --accent-foreground: oklch(0.145 0 0); /* Texto oscuro para contraste */
   
   --destructive: oklch(0.577 0.245 27.325);
@@ -36,7 +36,7 @@
   
   /* Ajuste de colores de gráfico para consistencia */
   --chart-1: oklch(0.4 0.2 245); /* Cian/Azul */
-  --chart-2: oklch(0.5 0.2 110); /* Verde Lima */
+  --chart-2: rgb(204, 243, 129); /* Verde Lima */
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
@@ -46,7 +46,7 @@
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.4 0.2 245);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.5 0.2 110);
+  --sidebar-accent: rgb(204, 243, 129);
   --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
