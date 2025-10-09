@@ -175,9 +175,10 @@ export default async function HomePage() {
                 </p>
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all"
-                >
+                  >
+                  <span className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all">
                   Ver mi trabajo <ArrowRight className="w-5 h-5" />
+                </span>
                 </Link>
               </div>
 
