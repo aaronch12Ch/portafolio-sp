@@ -13,11 +13,10 @@ async function getProyectos(): Promise<Proyecto[]> {
     })
 
     if (!response.ok) {
-      console.error("[v0] Error fetching proyectos:", response.status)
-      return []
+      throw new Error(`Error ${response.status}: No se pudieron obtener los proyectos.`);
     }
 
-    return response.json()
+    return response.json() as Promise<Proyecto[]>
   } catch (error) {
     console.error("[v0] Error fetching proyectos:", error)
     return []
