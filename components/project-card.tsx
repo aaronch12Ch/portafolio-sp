@@ -41,21 +41,27 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
       </CardHeader>
       <CardFooter className="flex flex-col sm:flex-row gap-2">
         <Button asChild variant="outline" className="w-full bg-transparent">
-          <a href={proyecto.url} target="_blank" rel="noopener noreferrer">
-            <span className="inline-flex items-center">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Ver Proyecto
-            </span>
+          <a 
+            href={proyecto.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center"
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Ver Proyecto
           </a>
         </Button>
 
         {hasVideo && (
           <Button asChild className="w-full">
-            <a href={videoUrl!} target="_blank" rel="noopener noreferrer">
-              <span className="inline-flex items-center">
-                <Video className="h-4 w-4 mr-2" />
-                Ver Video
-              </span>
+            <a 
+              href={videoUrl!} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center"
+            >
+              <Video className="h-4 w-4 mr-2" />
+              Ver Video
             </a>
           </Button>
         )}
