@@ -21,7 +21,6 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
     console.log("--- DEBUG START ---");
     console.log(`Nombre: ${proyecto.nombreProyecto}`);
     console.log(`s3VideoKey recibido: |${proyecto.s3VideoKey}| (Tipo: ${typeof proyecto.s3VideoKey})`);
-    console.log(`s3Key limpio: |${s3Key}|`);
     console.log(`videoUrl: ${videoUrl}`);
     console.log(`HAS VIDEO: ${hasVideo}`); // 👈 ESTO DEBE SER TRUE
     console.log("--- DEBUG END ---");
