@@ -9,9 +9,23 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ proyecto }: ProjectCardProps) {
-  console.log(`Proyecto: ${proyecto.nombreProyecto}, s3VideoKey: ${proyecto.s3VideoKey}`) // <-- ¡Añade esto!
-  
-  const videoUrl = proyecto.s3VideoKey ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}` : null
+  const s3Key = proyecto.s3VideoKey ? String(proyecto.s3VideoKey).trim() : null;
+
+    // 2. CONDICIÓN ESTRICTA: la clave existe Y su longitud es mayor a cero
+    const hasVideo = !!s3Key && s3Key.length > 0;
+    
+    // 3. Construir la URL solo si el video existe
+    const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${s3Key}` : null;
+
+    // 🔴 DEPURACIÓN CRÍTICA 
+    console.log("--- DEBUG START ---");
+    console.log(`Nombre: ${proyecto.nombreProyecto}`);
+    console.log(`s3VideoKey recibido: |${proyecto.s3VideoKey}| (Tipo: ${typeof proyecto.s3VideoKey})`);
+    console.log(`s3Key limpio: |${s3Key}|`);
+    console.log(`videoUrl: ${videoUrl}`);
+    console.log(`HAS VIDEO: ${hasVideo}`); // 👈 ESTO DEBE SER TRUE
+    console.log("--- DEBUG END ---");
+  //const videoUrl = proyecto.s3VideoKey ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}` : null
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -33,9 +47,10 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
             Ver Proyecto
           </a>
         </Button>
-        {videoUrl && (
+
+        {hasVideo && ( // <-- Usamos la variable hasVideo que es un booleano seguro
           <Button asChild className="w-full">
-            <a href={videoUrl} target="_blank" rel="noopener noreferrer">
+            <a href={videoUrl!} target="_blank" rel="noopener noreferrer">
               <Video className="h-4 w-4 mr-2" />
               Ver Video
             </a>
