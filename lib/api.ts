@@ -25,19 +25,27 @@ export interface CreateProyectoDto {
 
 // En tu función de API (getProyectosPublicos)
 
+// Proyectos públicos
 export async function getProyectosPublicos(): Promise<Proyecto[]> {
   try {
-    const response = await  fetch(`${API_BASE_URL}/proyectos/todos`);
+    const response = await fetch(`${API_BASE_URL}/proyectos/todos`, {
+      // ✅ Asegúrate de que el ISR esté aquí para evitar el modo dinámico
+      next: { revalidate: 3600 }, 
+    });
+
     if (!response.ok) {
-      // Si la respuesta no es 200, devuelve un array vacío en lugar de lanzar un error que podría
-      // ser mal manejado por el Server Component en el build.
+      // Si la respuesta HTTP no es OK (ej: 404, 500), no lances un error,
+      // solo loggea el error y devuelve una lista vacía.
       console.error("Error al cargar proyectos:", response.status);
-      return []; // ✅ Asegúrate de devolver un array vacío
+      return []; // <--- ¡CAMBIO CLAVE!
     }
+
     return response.json();
+    
   } catch (error) {
-    console.error("Error de red o JSON:", error);
-    return []; // ✅ Asegúrate de devolver un array vacío en caso de error de red
+    // Si hay un error de red o de parseo JSON, devuelve una lista vacía.
+    console.error("Error en la función getProyectosPublicos:", error);
+    return []; // <--- ¡CAMBIO CLAVE!
   }
 }
 
