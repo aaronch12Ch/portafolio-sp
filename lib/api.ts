@@ -9,7 +9,6 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  s3VideoKey?:string
 }
 
 export interface CreateProyectoDto {
@@ -17,36 +16,15 @@ export interface CreateProyectoDto {
   descripcionProyecto: string
   urlImagen: string
   url: string
-  s3VideoKey?:string
 }
 
 // Proyectos públicos
-
-
-// En tu función de API (getProyectosPublicos)
-
-// Proyectos públicos
 export async function getProyectosPublicos(): Promise<Proyecto[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/proyectos/todos`, {
-      // ✅ Asegúrate de que el ISR esté aquí para evitar el modo dinámico
-      next: { revalidate: 3600 }, 
-    });
-
-    if (!response.ok) {
-      // Si la respuesta HTTP no es OK (ej: 404, 500), no lances un error,
-      // solo loggea el error y devuelve una lista vacía.
-      console.error("Error al cargar proyectos:", response.status);
-      return []; // <--- ¡CAMBIO CLAVE!
-    }
-
-    return response.json();
-    
-  } catch (error) {
-    // Si hay un error de red o de parseo JSON, devuelve una lista vacía.
-    console.error("Error en la función getProyectosPublicos:", error);
-    return []; // <--- ¡CAMBIO CLAVE!
+  const response = await fetch(`${API_BASE_URL}/proyectos/todos`)
+  if (!response.ok) {
+    throw new Error("Error al cargar proyectos")
   }
+  return response.json()
 }
 
 // Login
