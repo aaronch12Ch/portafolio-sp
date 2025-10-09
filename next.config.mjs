@@ -9,9 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    dynamicIO: true, // ← Para Next.js 15
-  },
+  
 }
 
 export default nextConfig

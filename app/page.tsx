@@ -1,18 +1,22 @@
 //export const dynamic = 'force-dynamic' 
-
+export const dynamic = 'force-dynamic'
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
-import { AutoLogout } from "@/components/auto-logout"
+//import { AutoLogout } from "@/components/auto-logout"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import dynamic from 'next/dynamic'
 
 
+const AutoLogout = dynamic(() => import('@/components/auto-logout'), {
+  ssr: false
+})
 
 async function getProyectos(): Promise<Proyecto[]> {
   try {
     const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
-      cache: "no-store",
+      
     })
 
     if (!response.ok) {
