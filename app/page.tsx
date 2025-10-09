@@ -22,7 +22,7 @@ import Link from "next/link"
 //     return []
 //   }
 // }
-
+export const dynamic = 'force-static';
 export default async function HomePage() {
   const proyectos = await getProyectosPublicos()
 
