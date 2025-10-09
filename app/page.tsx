@@ -2,42 +2,36 @@
 import dynamic from 'next/dynamic'
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
-import { AutoLogout } from "@/components/auto-logout"
+// import { AutoLogout } from "@/components/auto-logout"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
-
+const AutoLogout = dynamic(() => import('@/components/auto-logout'), {
+  ssr: false
+})
 
 async function getProyectos(): Promise<Proyecto[]> {
   try {
     const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
       cache: "no-store",
-      // Agrega timeout
-      next: { revalidate: 60 } // 60 segundos
-    });
+    })
 
     if (!response.ok) {
-      console.error(`HTTP Error: ${response.status}`);
-      return [];
+      throw new Error(`Error ${response.status}: No se pudieron obtener los proyectos.`);
     }
 
-    const data = await response.json();
-    return data as Proyecto[];
+    return response.json() as Promise<Proyecto[]>
   } catch (error) {
-    console.error("Error fetching proyectos:", error);
-    return [];
+    console.error("[v0] Error fetching proyectos:", error)
+    return []
   }
 }
 
 export default async function HomePage() {
-  let proyectos: Proyecto[] = [];
+  const proyectos = await getProyectos()
   
-  try {
-    proyectos = await getProyectos();
-  } catch (error) {
-    console.error("Error in HomePage:", error);
-  }
+  
 
   return (
     <div className="min-h-screen bg-background">
