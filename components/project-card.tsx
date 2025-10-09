@@ -1,25 +1,21 @@
 'use client'
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink , Video } from "lucide-react"
+import { ExternalLink, Video } from "lucide-react"
 import Image from "next/image"
 import type { Proyecto } from "@/lib/api"
 import * as React from 'react'
+
 interface ProjectCardProps {
   proyecto: Proyecto
 }
 
 export function ProjectCard({ proyecto }: ProjectCardProps) {
-  const videoKey  = proyecto.s3VideoKey ??  null;
+  const videoKey = proyecto.s3VideoKey ?? null;
+  const hasVideo = !!videoKey && videoKey.length > 0;
+  const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${videoKey}` : null;
 
-    // 2. CONDICIÓN ESTRICTA: la clave existe Y su longitud es mayor a cero
-    const hasVideo = !!videoKey && videoKey.length > 0;
-    
-    // 3. Construir la URL solo si el video existe
-    const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${videoKey}` : null;
-
-    // 🔴 DEPURACIÓN CRÍTICA 
-    React.useEffect(() => {
+  React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log("ProjectCard debug:", {
         nombre: proyecto.nombreProyecto,
@@ -28,7 +24,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
       });
     }
   }, [proyecto.nombreProyecto, hasVideo, videoUrl]);
-  //const videoUrl = proyecto.s3VideoKey ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}` : null
+
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -43,22 +39,26 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
         <CardTitle className="text-balance">{proyecto.nombreProyecto}</CardTitle>
         <CardDescription className="text-pretty line-clamp-2">{proyecto.descripcionProyecto}</CardDescription>
       </CardHeader>
-      <CardFooter  className="flex flex-col sm:flex-row gap-2">
+      <CardFooter className="flex flex-col sm:flex-row gap-2">
         <Button asChild variant="outline" className="w-full bg-transparent">
           <a href={proyecto.url} target="_blank" rel="noopener noreferrer">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Ver Proyecto
+            <span className="inline-flex items-center">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Ver Proyecto
+            </span>
           </a>
         </Button>
 
-        {hasVideo && ( // <-- Usamos la variable hasVideo que es un booleano seguro
-          <Button asChild className="w-full">
-            <a href={videoUrl!} target="_blank" rel="noopener noreferrer">
-              <Video className="h-4 w-4 mr-2" />
-              Ver Video
-            </a>
-          </Button>
-        )}
+        {hasVideo && (
+          <Button asChild className="w-full">
+            <a href={videoUrl!} target="_blank" rel="noopener noreferrer">
+              <span className="inline-flex items-center">
+                <Video className="h-4 w-4 mr-2" />
+                Ver Video
+              </span>
+            </a>
+          </Button>
+        )}
       </CardFooter>
     </Card>
   )
