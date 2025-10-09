@@ -9,13 +9,13 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ proyecto }: ProjectCardProps) {
-  const s3Key = proyecto.s3VideoKey ? String(proyecto.s3VideoKey).trim() : null;
+  const videoKey  = proyecto.s3VideoKey ??  null;
 
     // 2. CONDICIÓN ESTRICTA: la clave existe Y su longitud es mayor a cero
-    const hasVideo = !!s3Key && s3Key.length > 0;
+    const hasVideo = !!videoKey && videoKey.length > 0;
     
     // 3. Construir la URL solo si el video existe
-    const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${s3Key}` : null;
+    const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${videoKey}` : null;
 
     // 🔴 DEPURACIÓN CRÍTICA 
     console.log("--- DEBUG START ---");
