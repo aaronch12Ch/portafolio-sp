@@ -8,7 +8,7 @@ import Link from "next/link"
 async function getProyectos(): Promise<Proyecto[]> {
   try {
     const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
-      cache: "no-store",
+       next: { revalidate: 3600 }, 
     })
 
     if (!response.ok) {

@@ -22,11 +22,7 @@ export interface CreateProyectoDto {
 
 // Proyectos públicos
 export async function getProyectosPublicos(): Promise<Proyecto[]> {
-  const response = await fetch(`${API_BASE_URL}/proyectos/todos`, {
-    // ✨ SOLUCIÓN: Usar Revalidación Incremental Estática (ISR)
-    // Esto hace que la página sea estática, pero se refresque cada 3600 segundos (1 hora)
-    next: { revalidate: 3600 }, 
-  })
+  const response = await fetch(`${API_BASE_URL}/proyectos/todos`)
   if (!response.ok) {
     throw new Error("Error al cargar proyectos")
   }
