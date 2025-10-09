@@ -1,30 +1,30 @@
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
-import type { Proyecto } from "@/lib/api"
+import type { getProyectosPublicos } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
-async function getProyectos(): Promise<Proyecto[]> {
-  try {
-    const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
-       next: { revalidate: 3600 }, 
-    })
+// async function getProyectos(): Promise<Proyecto[]> {
+//   try {
+//     const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
+//        next: { revalidate: 3600 }, 
+//     })
 
-    if (!response.ok) {
-      console.error("[v0] Error fetching proyectos:", response.status)
-      return []
-    }
+//     if (!response.ok) {
+//       console.error("[v0] Error fetching proyectos:", response.status)
+//       return []
+//     }
 
-    return response.json()
-  } catch (error) {
-    console.error("[v0] Error fetching proyectos:", error)
-    return []
-  }
-}
+//     return response.json()
+//   } catch (error) {
+//     console.error("[v0] Error fetching proyectos:", error)
+//     return []
+//   }
+// }
 
 export default async function HomePage() {
-  const proyectos = await getProyectos()
+  const proyectos = await getProyectosPublicos()
 
   return (
     <div className="min-h-screen bg-background">
@@ -150,8 +150,8 @@ export default async function HomePage() {
 
           {proyectos.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {proyectos.map((proyecto) => (
-                <ProjectCard key={proyecto.idProyecto} proyecto={proyecto} />
+              {proyectos.map((proyecto,i) => (
+                <ProjectCard key={proyecto.idProyecto || i} proyecto={proyecto} />
               ))}
             </div>
           )}
