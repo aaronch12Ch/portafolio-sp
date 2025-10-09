@@ -9,6 +9,7 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
+  s3VideoKey: string | null 
 }
 
 export interface CreateProyectoDto {
@@ -16,6 +17,7 @@ export interface CreateProyectoDto {
   descripcionProyecto: string
   urlImagen: string
   url: string
+  s3VideoKey: string | null 
 }
 
 // Proyectos públicos
