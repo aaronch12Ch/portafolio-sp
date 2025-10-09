@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { ExternalLink , Video } from "lucide-react"
 import Image from "next/image"
 import type { Proyecto } from "@/lib/api"
-
+import * as React from 'react'
 interface ProjectCardProps {
   proyecto: Proyecto
 }
@@ -18,12 +18,15 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
     const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${videoKey}` : null;
 
     // 🔴 DEPURACIÓN CRÍTICA 
-    console.log("--- DEBUG START ---");
-    console.log(`Nombre: ${proyecto.nombreProyecto}`);
-    console.log(`s3VideoKey recibido: |${proyecto.s3VideoKey}| (Tipo: ${typeof proyecto.s3VideoKey})`);
-    console.log(`videoUrl: ${videoUrl}`);
-    console.log(`HAS VIDEO: ${hasVideo}`); // 👈 ESTO DEBE SER TRUE
-    console.log("--- DEBUG END ---");
+    React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log("ProjectCard debug:", {
+        nombre: proyecto.nombreProyecto,
+        hasVideo,
+        videoUrl
+      });
+    }
+  }, [proyecto.nombreProyecto, hasVideo, videoUrl]);
   //const videoUrl = proyecto.s3VideoKey ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}` : null
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">

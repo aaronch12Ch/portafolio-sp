@@ -10,21 +10,31 @@ async function getProyectos(): Promise<Proyecto[]> {
   try {
     const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
       cache: "no-store",
-    })
+      // Agrega timeout
+      next: { revalidate: 60 } // 60 segundos
+    });
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: No se pudieron obtener los proyectos.`);
+      console.error(`HTTP Error: ${response.status}`);
+      return [];
     }
 
-    return response.json() as Promise<Proyecto[]>
+    const data = await response.json();
+    return data as Proyecto[];
   } catch (error) {
-    console.error("[v0] Error fetching proyectos:", error)
-    return []
+    console.error("Error fetching proyectos:", error);
+    return [];
   }
 }
 
 export default async function HomePage() {
-  const proyectos = await getProyectos()
+  let proyectos: Proyecto[] = [];
+  
+  try {
+    proyectos = await getProyectos();
+  } catch (error) {
+    console.error("Error in HomePage:", error);
+  }
 
   return (
     <div className="min-h-screen bg-background">
