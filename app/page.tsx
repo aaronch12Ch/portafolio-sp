@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
-import type { getProyectosPublicos } from "@/lib/api"
+import { getProyectosPublicos } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
