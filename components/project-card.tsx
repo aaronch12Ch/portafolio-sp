@@ -1,6 +1,6 @@
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink,Video } from "lucide-react"
 import Image from "next/image"
 import type { Proyecto } from "@/lib/api"
 
@@ -38,7 +38,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
               target="_blank" 
               rel="noopener noreferrer"
             >
-              <Video className="h-4 w-4 mr-2" />
+            <Video className="h-4 w-4 mr-2" />
               Ver Video
             </a>
           </Button>
