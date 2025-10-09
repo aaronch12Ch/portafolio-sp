@@ -34,12 +34,12 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
         {proyecto.s3VideoKey !== null && (
           <Button asChild className="w-full"> {/* Puedes usar el estilo por defecto o primary */}
             <a 
-              href={`https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey?}`} // Reemplaza con la URL correcta para ver tu video
+              href={`https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}`} // Reemplaza con la URL correcta para ver tu video
               target="_blank" 
               rel="noopener noreferrer"
             >
-            <Video className="h-4 w-4 mr-2" />
-              Ver Video
+              <Video className="h-4 w-4 mr-2" />
+                Ver Video
             </a>
           </Button>
         )}
