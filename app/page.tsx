@@ -1,15 +1,13 @@
 //export const dynamic = 'force-dynamic' 
-import dynamic from 'next/dynamic'
+
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
-// import { AutoLogout } from "@/components/auto-logout"
+import { AutoLogout } from "@/components/auto-logout"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
-const AutoLogout = dynamic(() => import('@/components/auto-logout'), {
-  ssr: false
-})
+
 
 async function getProyectos(): Promise<Proyecto[]> {
   try {
