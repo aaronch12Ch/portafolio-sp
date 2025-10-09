@@ -1,6 +1,6 @@
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink,Video } from "lucide-react"
+import { ExternalLink, Video } from "lucide-react"
 import Image from "next/image"
 import type { Proyecto } from "@/lib/api"
 
