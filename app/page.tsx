@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic' 
+//export const dynamic = 'force-dynamic' 
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
