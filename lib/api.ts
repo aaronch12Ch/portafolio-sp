@@ -21,12 +21,24 @@ export interface CreateProyectoDto {
 }
 
 // Proyectos públicos
+
+
+// En tu función de API (getProyectosPublicos)
+
 export async function getProyectosPublicos(): Promise<Proyecto[]> {
-  const response = await fetch(`${API_BASE_URL}/proyectos/todos`)
-  if (!response.ok) {
-    throw new Error("Error al cargar proyectos")
+  try {
+    const response = await  fetch(`${API_BASE_URL}/proyectos/todos`);
+    if (!response.ok) {
+      // Si la respuesta no es 200, devuelve un array vacío en lugar de lanzar un error que podría
+      // ser mal manejado por el Server Component en el build.
+      console.error("Error al cargar proyectos:", response.status);
+      return []; // ✅ Asegúrate de devolver un array vacío
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error de red o JSON:", error);
+    return []; // ✅ Asegúrate de devolver un array vacío en caso de error de red
   }
-  return response.json()
 }
 
 // Login
