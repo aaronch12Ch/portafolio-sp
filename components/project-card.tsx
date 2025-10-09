@@ -9,6 +9,8 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ proyecto }: ProjectCardProps) {
+  console.log(`Proyecto: ${proyecto.nombreProyecto}, s3VideoKey: ${proyecto.s3VideoKey}`) // <-- ¡Añade esto!
+  
   const videoUrl = proyecto.s3VideoKey ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${proyecto.s3VideoKey}` : null
   return (
     <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
