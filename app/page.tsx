@@ -166,6 +166,7 @@ export default async function HomePage() {
                                 </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
           {proyectos.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {proyectos.map((proyecto,i) => (
@@ -176,6 +177,8 @@ export default async function HomePage() {
         </div>
       </section>
 =======
+=======
+>>>>>>> parent of 614647a (Modifique errores)
                                 {/* Controles de Navegación */}
                                 <div className="flex justify-center mt-12 gap-4">
                                     <button
@@ -216,6 +219,9 @@ export default async function HomePage() {
                     )}
                 </div>
             </section>
+<<<<<<< HEAD
+>>>>>>> parent of 614647a (Modifique errores)
+=======
 >>>>>>> parent of 614647a (Modifique errores)
 
       <section className="bg-background py-20 lg:py-32">
