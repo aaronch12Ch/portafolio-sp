@@ -39,7 +39,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
         <CardTitle className="text-balance">{proyecto.nombreProyecto}</CardTitle>
         <CardDescription className="text-pretty line-clamp-2">{proyecto.descripcionProyecto}</CardDescription>
       </CardHeader>
-      <CardFooter className="flex flex-col sm:flex-row gap-2">
+      <CardFooter className=" flex-col sm:flex-row gap-2">
         <Button asChild variant="outline" className="w-full bg-transparent">
           <a 
             href={proyecto.url} 
