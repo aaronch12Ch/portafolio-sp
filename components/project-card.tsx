@@ -39,7 +39,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
         <CardTitle className="text-balance">{proyecto.nombreProyecto}</CardTitle>
         <CardDescription className="text-pretty line-clamp-2">{proyecto.descripcionProyecto}</CardDescription>
       </CardHeader>
-      <CardFooter className=" flex-col sm:flex-row gap-2 w-full">
+      <CardFooter className="flex flex-col gap-2 w-full">
         <Button asChild variant="outline" className="w-full bg-transparent">
           <a 
             href={proyecto.url} 
@@ -58,7 +58,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
               href={videoUrl!} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-full"
+              className="inline-flex items-center justify-center"
             >
               <Video className="h-4 w-4 mr-2" />
               Ver Video
