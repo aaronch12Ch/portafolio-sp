@@ -88,7 +88,7 @@ export default async function HomePage() {
             <div className="relative">
               <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 relative">
                 <img
-                  src="https://scontent.fmex3-1.fna.fbcdn.net/v/t39.30808-1/421685041_6760146827445156_3504323613646736695_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=100&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeFu8itor4hYwMnYohMdshLnAcwcHXLyyWMBzBwdcvLJY7R_QW-WmkzlEySg3YEI3GqG6kmQUvUQJZBYuvFp-ZzE&_nc_ohc=2naIa6FGN5oQ7kNvwGcMpkl&_nc_oc=AdkR_-Ds74aI1cI1CyA256YbxlMjqKK3G2476pbGEXRPMTPHW3eA-XMvmm73PIbU5rzrXnHqFLm0htYdUNujENYX&_nc_zt=24&_nc_ht=scontent.fmex3-1.fna&_nc_gid=FN_wgpiVU0g2318G885pPw&oh=00_AfcqCh0RJoIdl9BcSIOnhNK9UiG910kDOq9QlfoCjnm1TQ&oe=68E69307"
+                  src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
                   alt="Profile"
                   className="w-full h-full object-cover rounded-2xl shadow-2xl"
                 />
