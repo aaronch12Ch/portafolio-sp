@@ -32,7 +32,7 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
           src={proyecto.urlImagen || "/placeholder.svg?height=400&width=600"}
           alt={proyecto.nombreProyecto}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-contain group-hover:scale-105 transition-transform duration-300"
         />
       </div>
       <CardHeader>
