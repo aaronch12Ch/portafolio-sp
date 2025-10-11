@@ -24,6 +24,7 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     descripcionProyecto: proyecto?.descripcionProyecto || "",
     urlImagen: proyecto?.urlImagen || "",
     url: proyecto?.url || "",
+    s3VideoKey: null,
   })
   const [imageUrlError, setImageUrlError] = useState("")
 
@@ -51,6 +52,10 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     } else {
       setImageUrlError("")
     }
+  }
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Almacena el primer archivo seleccionado (o null si se deselecciona)
+    setFormData({ ...formData, s3VideoKey: e.target.files ? e.target.files[0] : null })
   }
 
   return (
@@ -104,6 +109,25 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
             <p className="text-sm text-muted-foreground">
               Ingresa la URL completa de una imagen (debe comenzar con http:// o https://)
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="s3VideoKey">Subir Video (Opcional)</Label>
+            <Input
+              id="s3VideoKey"
+              type="file" // CLAVE: El tipo debe ser 'file'
+              accept="video/*" // Sugiere al navegador aceptar solo videos
+              onChange={handleVideoFileChange} // Usa el nuevo manejador
+              disabled={loading}
+            />
+            <p className="text-sm text-muted-foreground">
+              Selecciona un archivo de video para subir. Solo se enviará un nuevo video si lo seleccionas.
+            </p>
+            {proyecto?.s3VideoKey && !formData.s3VideoKey && (
+              <p className="text-sm text-blue-500">
+                Video actual: {proyecto.s3VideoKey} (Si no subes uno nuevo, se mantendrá este.)
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">

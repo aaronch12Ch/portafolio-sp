@@ -9,7 +9,7 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  s3VideoKey?: string | null 
+  s3VideoKey?: File | null 
 }
 
 export interface CreateProyectoDto {
@@ -17,7 +17,7 @@ export interface CreateProyectoDto {
   descripcionProyecto: string
   urlImagen: string
   url: string
-  s3VideoKey?: string | null 
+  s3VideoKey?: File | null 
 }
 
 // Proyectos públicos
@@ -62,40 +62,102 @@ export async function getProyectosAdmin(): Promise<Proyecto[]> {
   return response.json()
 }
 
+// export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
+//   const token = getToken()
+//   const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: JSON.stringify(proyecto),
+//   })
+
+//   if (!response.ok) {
+//     throw new Error("Error al crear proyecto")
+//   }
+
+//   return response.json()
+// }
 export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
-  const token = getToken()
+  const token = getToken();
+
+  // 1. Crear un objeto FormData
+  const formData = new FormData();
+  
+  // 2. Separar los datos del proyecto del archivo
+  const { s3VideoKey, ...proyectoData } = proyecto;
+
+  // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
+  //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'
+  formData.append("proyecto", JSON.stringify(proyectoData));
+  
+  // 4. Agregar la parte 'video' (el archivo)
+  //    IMPORTANTE: El nombre de la clave debe ser "video"
+  if (s3VideoKey) {
+    formData.append("video", s3VideoKey);
+  } 
+  
   const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      // 5. ¡CLAVE! Solo incluimos el header de autorización.
+      //    El navegador establecerá el 'Content-Type: multipart/form-data' 
+      //    automáticamente al usar FormData.
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(proyecto),
-  })
+    // 6. Enviar el objeto FormData
+    body: formData, 
+  });
 
   if (!response.ok) {
-    throw new Error("Error al crear proyecto")
+    const errorText = await response.text();
+    // Manejo de errores mejorado
+    throw new Error(`Error al crear proyecto: ${errorText || response.statusText}`);
   }
 
-  return response.json()
+  return response.json();
 }
 
 export async function updateProyecto(idProyecto: number, proyecto: CreateProyectoDto): Promise<Proyecto> {
-  const token = getToken()
+  const token = getToken();
+
+  // 1. Crear un objeto FormData
+  const formData = new FormData();
+  
+  // 2. Separar el archivo de video de los datos del proyecto
+  const { s3VideoKey, ...proyectoData } = proyecto;
+
+  // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
+  //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'.
+  formData.append("proyecto", JSON.stringify(proyectoData));
+  
+  // 4. Agregar la parte 'video' (el archivo), solo si existe.
+  //    Si el usuario no sube un archivo, el backend asume que no hay cambio de video.
+  if (s3VideoKey) {
+    // Si tienes que manejar la eliminación de un video existente, 
+    // podrías necesitar otro campo para indicarlo.
+    formData.append("video", s3VideoKey);
+  }
+  
   const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
+    // CLAVE: El método es PUT
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
+      // 5. ¡CLAVE! Solo incluimos el header de autorización.
+      //    El navegador establecerá el 'Content-Type: multipart/form-data' automáticamente.
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(proyecto),
-  })
+    // 6. Enviar el objeto FormData
+    body: formData, 
+  });
 
   if (!response.ok) {
-    throw new Error("Error al actualizar proyecto")
+    const errorText = await response.text();
+    throw new Error(`Error al actualizar proyecto: ${errorText || response.statusText}`);
   }
 
-  return response.json()
+  return response.json();
 }
 
 export async function deleteProyecto(idProyecto: number): Promise<void> {
