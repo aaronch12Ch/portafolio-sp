@@ -25,7 +25,8 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     urlImagen: proyecto?.urlImagen || "",
     url: proyecto?.url || "",
     disponibleProyecto: proyecto?.disponibleProyecto ?? true, 
-    s3VideoKey: null,
+    s3VideoKey: proyecto?.s3VideoKey || null, 
+    videoFile: null, 
   })
   const [imageUrlError, setImageUrlError] = useState("")
 
@@ -54,10 +55,11 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
       setImageUrlError("")
     }
   }
-  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Almacena el primer archivo seleccionado (o null si se deselecciona)
-    setFormData({ ...formData, s3VideoKey: e.target.files ? e.target.files[0] : null })
-  }
+  // Función que maneja la selección de archivo
+const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 🚨 CAMBIO 2: Almacenar el archivo en 'videoFile'
+    setFormData({ ...formData, videoFile: e.target.files ? e.target.files[0] : null })
+}
   const handleDisponibleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, disponibleProyecto: e.target.checked })
   }
@@ -119,14 +121,16 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
             <Input
               id="s3VideoKey"
               type="file" // CLAVE: El tipo debe ser 'file'
-              accept="video/*" // Sugiere al navegador aceptar solo videos
-              onChange={handleVideoFileChange} // Usa el nuevo manejador
+              accept="video/*"
+              onChange={handleVideoFileChange} // Usa el manejador correcto
               disabled={loading}
             />
             <p className="text-sm text-muted-foreground">
               Selecciona un archivo de video para subir. Solo se enviará un nuevo video si lo seleccionas.
             </p>
-            {proyecto?.s3VideoKey && !formData.s3VideoKey && (
+            
+            {/* 🚨 CAMBIO AQUÍ: Usar formData.videoFile para verificar si hay un nuevo archivo */}
+            {proyecto?.s3VideoKey && !formData.videoFile && (
               <p className="text-sm text-blue-500">
                 Video actual: {proyecto.s3VideoKey} (Si no subes uno nuevo, se mantendrá este.)
               </p>
