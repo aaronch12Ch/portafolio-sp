@@ -1,8 +1,8 @@
 "use client"
 
-import type React from "react" // 'type' es correcto, pero se elimina el segundo import de useState
+import type React from "react"
 
-import { useState } from "react" // Único import de useState
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,23 +11,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast"
 import { loginAction } from "@/lib/server-actions"
 import { saveAuth } from "@/lib/auth"
-import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react" // Íconos de ojo
+import { Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function LoginPage() {
   const [correoUsuario, setCorreoUsuario] = useState("")
   const [contrasena, setContrasena] = useState("")
   const [loading, setLoading] = useState(false)
-  // Nuevo estado para controlar la visibilidad de la contraseña
-  const [showPassword, setShowPassword] = useState(false) 
-  
   const router = useRouter()
   const { toast } = useToast()
-
-  // Función para cambiar el estado (moverla dentro de LoginPage)
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev) // Uso de función para actualizar estado
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,43 +98,18 @@ export default function LoginPage() {
                   disabled={loading}
                 />
               </div>
-
-              {/* Contraseña con el Toggle de Visibilidad */}
               <div className="space-y-2">
                 <Label htmlFor="contrasena">Contraseña</Label>
-                
-                <div className="relative"> 
-                  <Input
-                    id="contrasena"
-                    // **CLAVE:** Cambia el tipo basado en el estado
-                    type={showPassword ? 'text' : 'password'} 
-                    placeholder="Ingresa tu contraseña"
-                    value={contrasena}
-                    onChange={(e) => setContrasena(e.target.value)}
-                    required
-                    disabled={loading}
-                    // **CLAVE:** Añade padding a la derecha para el icono
-                    className="pr-10" 
-                  />
-                  
-                  {/* Botón/Icono para alternar la visibilidad */}
-                  <button
-                    type="button" 
-                    onClick={togglePasswordVisibility}
-                    disabled={loading}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  >
-                    {/* Muestra el icono de ojo abierto o cerrado */}
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  id="contrasena"
+                  type="password"
+                  placeholder="Ingresa tu contraseña"
+                  value={contrasena}
+                  onChange={(e) => setContrasena(e.target.value)}
+                  required
+                  disabled={loading}
+                />
               </div>
-
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
