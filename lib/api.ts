@@ -101,7 +101,7 @@ export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proye
   // 4. Agregar la parte 'video' (el archivo)
   //    IMPORTANTE: El nombre de la clave debe ser "video"
   if (s3VideoKey) {
-    formData.append("video", s3VideoKey);
+    formData.append("video", s3VideoKey,s3VideoKey.name);
   } 
   
   const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
@@ -147,7 +147,7 @@ export async function updateProyecto(idProyecto: number, proyecto: CreateProyect
   if (s3VideoKey) {
     // Si tienes que manejar la eliminación de un video existente, 
     // podrías necesitar otro campo para indicarlo.
-    formData.append("video", s3VideoKey);
+    formData.append("video", s3VideoKey,s3VideoKey.name);
   }
   
   const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
