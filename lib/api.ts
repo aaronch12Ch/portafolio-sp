@@ -91,7 +91,8 @@ export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proye
 
   // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
   //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'
-  formData.append("proyecto", JSON.stringify(proyectoData),"application/json");
+  const jsonBlob = new Blob([JSON.stringify(proyectoData)], { type: 'application/json' });
+  formData.append("proyecto", jsonBlob);
   
   // 4. Agregar la parte 'video' (el archivo)
   //    IMPORTANTE: El nombre de la clave debe ser "video"
@@ -131,7 +132,10 @@ export async function updateProyecto(idProyecto: number, proyecto: CreateProyect
 
   // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
   //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'.
-  formData.append("proyecto", JSON.stringify(proyectoData), "application/json");
+  // Alternativa más compleja:
+  const jsonBlob = new Blob([JSON.stringify(proyectoData)], { type: 'application/json' });
+  formData.append("proyecto", jsonBlob);
+  
   
   // 4. Agregar la parte 'video' (el archivo), solo si existe.
   //    Si el usuario no sube un archivo, el backend asume que no hay cambio de video.
