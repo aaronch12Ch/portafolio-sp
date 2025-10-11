@@ -113,7 +113,7 @@ export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proye
         formData.append("video", videoFile, videoFile.name);
     } 
     
-    const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+    const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin`, {
         method: "POST",
         headers: {
             // El navegador se encarga del Content-Type: multipart/form-data
@@ -155,7 +155,7 @@ export async function updateProyecto(idProyecto: number, proyecto: CreateProyect
     }
     // Nota: Si 'videoFile' es null, no se adjunta nada, y el backend conserva la s3VideoKey existente.
     
-    const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
+    const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${idProyecto}`, {
         method: "PUT",
         headers: {
             Authorization: `Bearer ${token}`,
