@@ -24,6 +24,7 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     descripcionProyecto: proyecto?.descripcionProyecto || "",
     urlImagen: proyecto?.urlImagen || "",
     url: proyecto?.url || "",
+    disponibleProyecto: proyecto?.disponibleProyecto ?? true, 
     s3VideoKey: null,
   })
   const [imageUrlError, setImageUrlError] = useState("")
@@ -57,7 +58,9 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     // Almacena el primer archivo seleccionado (o null si se deselecciona)
     setFormData({ ...formData, s3VideoKey: e.target.files ? e.target.files[0] : null })
   }
-
+  const handleDisponibleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, disponibleProyecto: e.target.checked })
+  }
   return (
     <Card>
       <CardHeader>
@@ -129,6 +132,22 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
               </p>
             )}
           </div>
+
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Input
+              id="disponibleProyecto"
+              type="checkbox"
+              checked={formData.disponibleProyecto}
+              onChange={handleDisponibleChange}
+              disabled={loading}
+              className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500"
+            />
+            <Label htmlFor="disponibleProyecto">
+              Proyecto Disponible 
+            </Label>
+          </div>
+
 
           <div className="space-y-2">
             <Label htmlFor="url">Enlace del Proyecto</Label>

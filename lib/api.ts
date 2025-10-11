@@ -17,6 +17,7 @@ export interface CreateProyectoDto {
   descripcionProyecto: string
   urlImagen: string
   url: string
+  disponibleProyecto?: boolean
   s3VideoKey?: File | null 
 }
 
