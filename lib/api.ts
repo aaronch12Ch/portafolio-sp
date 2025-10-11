@@ -9,7 +9,8 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  s3VideoKey?: File | null 
+  s3VideoKey?: string | null 
+
 }
 
 export interface CreateProyectoDto {
@@ -18,7 +19,12 @@ export interface CreateProyectoDto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  s3VideoKey?: File | null 
+  videoFile?: File | null; 
+  
+  // Opcional: Puedes mantener s3VideoKey solo para la ruta de retorno, 
+  // pero NO la envías como dato de entrada del formulario.
+  s3VideoKey?: string | null; 
+
 }
 
 // Proyectos públicos
@@ -80,94 +86,89 @@ export async function getProyectosAdmin(): Promise<Proyecto[]> {
 
 //   return response.json()
 // }
+// Importa el DTO modificado
+
 export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
-  const token = getToken();
+    const token = getToken();
 
-  // 1. Crear un objeto FormData
-  const formData = new FormData();
-  
-  // 2. Separar los datos del proyecto del archivo
-  const { s3VideoKey, ...proyectoData } = proyecto;
+    // 1. Crear un objeto FormData
+    const formData = new FormData();
+    
+    // 2. Separar el archivo de los datos JSON.
+    // Usamos 'videoFile' para el archivo, y el resto en 'proyectoData'.
+    const { videoFile, s3VideoKey, ...proyectoData } = proyecto; 
 
-  // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
-  //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'
-  const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-  type: 'application/json' 
-  });
+    // 3. Crear el Blob para la parte JSON (evita el error 400/500)
+    const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+        type: 'application/json' 
+    });
+    
+    // 4. Adjuntar la parte 'proyecto'
+    formData.append("proyecto", jsonBlob); 
+    
+    // 5. Adjuntar la parte 'video' (el archivo) solo si existe
+    // CLAVE: Usamos la clave "video" que el backend espera (@RequestParam("video"))
+    if (videoFile) {
+        // El tercer argumento es opcional, pero ayuda a Spring Boot
+        formData.append("video", videoFile, videoFile.name);
+    } 
+    
+    const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+        method: "POST",
+        headers: {
+            // El navegador se encarga del Content-Type: multipart/form-data
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData, 
+    });
 
-  formData.append("proyecto", jsonBlob); 
-  
-  
-  // 4. Agregar la parte 'video' (el archivo)
-  //    IMPORTANTE: El nombre de la clave debe ser "video"
-  if (s3VideoKey) {
-    formData.append("video", s3VideoKey,s3VideoKey.name);
-  } 
-  
-  const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin`, {
-    method: "POST",
-    headers: {
-      // 5. ¡CLAVE! Solo incluimos el header de autorización.
-      //    El navegador establecerá el 'Content-Type: multipart/form-data' 
-      //    automáticamente al usar FormData.
-      Authorization: `Bearer ${token}`,
-    },
-    // 6. Enviar el objeto FormData
-    body: formData, 
-  });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al crear proyecto: ${errorText || response.statusText}`);
+    }
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    // Manejo de errores mejorado
-    throw new Error(`Error al crear proyecto: ${errorText || response.statusText}`);
-  }
-
-  return response.json();
+    return response.json();
 }
 
+
 export async function updateProyecto(idProyecto: number, proyecto: CreateProyectoDto): Promise<Proyecto> {
-  const token = getToken();
+    const token = getToken();
 
-  // 1. Crear un objeto FormData
-  const formData = new FormData();
-  
-  // 2. Separar el archivo de video de los datos del proyecto
-  const { s3VideoKey, ...proyectoData } = proyecto;
+    // 1. Crear un objeto FormData
+    const formData = new FormData();
+    
+    // 2. Separar el archivo de los datos JSON.
+    const { videoFile, s3VideoKey, ...proyectoData } = proyecto; 
 
-  // 3. Agregar la parte 'proyecto' (los datos del proyecto como JSON string)
-  //    NOTA: El backend espera un 'String' de JSON para la parte 'proyecto'.
-  const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-  type: 'application/json' 
-  });
+    // 3. Crear el Blob para la parte JSON
+    const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+        type: 'application/json' 
+    });
 
-  formData.append("proyecto", jsonBlob); 
-  
-  // 4. Agregar la parte 'video' (el archivo), solo si existe.
-  //    Si el usuario no sube un archivo, el backend asume que no hay cambio de video.
-  if (s3VideoKey) {
-    // Si tienes que manejar la eliminación de un video existente, 
-    // podrías necesitar otro campo para indicarlo.
-    formData.append("video", s3VideoKey,s3VideoKey.name);
-  }
-  
-  const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${idProyecto}`, {
-    // CLAVE: El método es PUT
-    method: "PUT",
-    headers: {
-      // 5. ¡CLAVE! Solo incluimos el header de autorización.
-      //    El navegador establecerá el 'Content-Type: multipart/form-data' automáticamente.
-      Authorization: `Bearer ${token}`,
-    },
-    // 6. Enviar el objeto FormData
-    body: formData, 
-  });
+    // 4. Adjuntar la parte 'proyecto'
+    formData.append("proyecto", jsonBlob); 
+    
+    // 5. Adjuntar la parte 'video' (el archivo) solo si existe
+    if (videoFile) {
+        // CLAVE: Usamos la clave "video"
+        formData.append("video", videoFile, videoFile.name);
+    }
+    // Nota: Si 'videoFile' es null, no se adjunta nada, y el backend conserva la s3VideoKey existente.
+    
+    const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData, 
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al actualizar proyecto: ${errorText || response.statusText}`);
-  }
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al actualizar proyecto: ${errorText || response.statusText}`);
+    }
 
-  return response.json();
+    return response.json();
 }
 
 export async function deleteProyecto(idProyecto: number): Promise<void> {
