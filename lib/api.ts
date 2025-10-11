@@ -1,5 +1,5 @@
 import { getToken } from "./auth"
-
+import axios from 'axios';
 const API_BASE_URL = "https://portafolio-1-q45o.onrender.com/api"
 
 export interface Proyecto {
@@ -91,84 +91,82 @@ export async function getProyectosAdmin(): Promise<Proyecto[]> {
 export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
     const token = getToken();
 
-    // 1. Crear un objeto FormData
     const formData = new FormData();
-    
-    // 2. Separar el archivo de los datos JSON.
-    // Usamos 'videoFile' para el archivo, y el resto en 'proyectoData'.
-    const { videoFile, s3VideoKey, ...proyectoData } = proyecto; 
+    const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
 
-    // 3. Crear el Blob para la parte JSON (evita el error 400/500)
+    // Crear el Blob para la parte 'proyecto' (crucial para Spring Boot)
     const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
         type: 'application/json' 
     });
     
-    // 4. Adjuntar la parte 'proyecto'
     formData.append("proyecto", jsonBlob); 
     
-    // 5. Adjuntar la parte 'video' (el archivo) solo si existe
-    // CLAVE: Usamos la clave "video" que el backend espera (@RequestParam("video"))
+    // Adjuntar la parte 'video'
     if (videoFile) {
-        // El tercer argumento es opcional, pero ayuda a Spring Boot
         formData.append("video", videoFile, videoFile.name);
     } 
-    
-    const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin`, {
-        method: "POST",
-        headers: {
-            // El navegador se encarga del Content-Type: multipart/form-data
-            Authorization: `Bearer ${token}`,
-        },
-        body: formData, 
-    });
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error al crear proyecto: ${errorText || response.statusText}`);
+    try {
+        // 🚨 CAMBIO CLAVE: Usar axios.post
+        const response = await axios.post<Proyecto>(
+            `${API_BASE_URL}/proyectos/admin`, 
+            formData, // Axios pasa el FormData como cuerpo
+            {
+                headers: {
+                    // Solo incluimos el header de autorización.
+                    // Axios se encarga de Content-Type: multipart/form-data
+                    Authorization: `Bearer ${token}`,
+                },
+                // La configuración de timeout puede ayudar si es un problema de red
+                // timeout: 30000, 
+            }
+        );
+        // Axios devuelve los datos en la propiedad 'data'
+        return response.data;
+    } catch (error: any) {
+        // Manejo de errores de Axios
+        const status = error.response?.status || 'N/A';
+        const message = error.response?.data?.message || error.message;
+        throw new Error(`Error ${status} al crear proyecto: ${message}`);
     }
-
-    return response.json();
 }
-
 
 export async function updateProyecto(idProyecto: number, proyecto: CreateProyectoDto): Promise<Proyecto> {
     const token = getToken();
 
-    // 1. Crear un objeto FormData
     const formData = new FormData();
-    
-    // 2. Separar el archivo de los datos JSON.
     const { videoFile, s3VideoKey, ...proyectoData } = proyecto; 
 
-    // 3. Crear el Blob para la parte JSON
+    // Crear el Blob para la parte 'proyecto'
     const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
         type: 'application/json' 
     });
 
-    // 4. Adjuntar la parte 'proyecto'
     formData.append("proyecto", jsonBlob); 
     
-    // 5. Adjuntar la parte 'video' (el archivo) solo si existe
+    // Adjuntar la parte 'video'
     if (videoFile) {
-        // CLAVE: Usamos la clave "video"
         formData.append("video", videoFile, videoFile.name);
     }
-    // Nota: Si 'videoFile' es null, no se adjunta nada, y el backend conserva la s3VideoKey existente.
     
-    const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${idProyecto}`, {
-        method: "PUT",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        body: formData, 
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error al actualizar proyecto: ${errorText || response.statusText}`);
+    try {
+        // 🚨 CAMBIO CLAVE: Usar axios.put
+        const response = await axios.put<Proyecto>(
+            `${API_BASE_URL}/proyectos/admin/${idProyecto}`, 
+            formData, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                // timeout: 30000, 
+            }
+        );
+        return response.data;
+    } catch (error: any) {
+        const status = error.response?.status || 'N/A';
+        const message = error.response?.data?.message || error.message;
+        throw new Error(`Error ${status} al actualizar proyecto: ${message}`);
     }
-
-    return response.json();
 }
 
 export async function deleteProyecto(idProyecto: number): Promise<void> {
