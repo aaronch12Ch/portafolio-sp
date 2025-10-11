@@ -104,7 +104,7 @@ export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proye
     formData.append("video", s3VideoKey,s3VideoKey.name);
   } 
   
-  const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+  const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin`, {
     method: "POST",
     headers: {
       // 5. ¡CLAVE! Solo incluimos el header de autorización.
@@ -150,7 +150,7 @@ export async function updateProyecto(idProyecto: number, proyecto: CreateProyect
     formData.append("video", s3VideoKey,s3VideoKey.name);
   }
   
-  const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
+  const response = await fetch(`https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${idProyecto}`, {
     // CLAVE: El método es PUT
     method: "PUT",
     headers: {
