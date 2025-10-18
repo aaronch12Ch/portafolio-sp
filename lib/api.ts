@@ -9,6 +9,7 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
+  videoFile?: File | null;
   s3VideoKey?: string | null 
 
 }

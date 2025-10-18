@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import type { CreateProyectoDto, Proyecto } from "./api"
+import type {  Proyecto } from "./api"
 
 const API_BASE_URL = "https://portafolio-1-q45o.onrender.com/api"
 
