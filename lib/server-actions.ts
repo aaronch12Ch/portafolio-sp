@@ -33,59 +33,91 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
 }
 
 export async function createProyectoAction(token: string, proyecto: CreateProyectoDto) {
-  try {
-    console.log("[v0] createProyectoAction - Token length:", token?.length)
-    console.log("[v0] createProyectoAction - Token preview:", token?.substring(0, 20) + "...")
-    console.log("[v0] createProyectoAction - Proyecto data:", JSON.stringify(proyecto))
+    try {
+        const formData = new FormData();
+        // Separamos el archivo y los datos JSON
+        const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
 
-    const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(proyecto),
-    })
+        // 1. Crear el Blob para la parte 'proyecto' (JSON)
+        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+            type: 'application/json' 
+        });
+        
+        // El backend espera una parte llamada 'proyecto'
+        formData.append("proyecto", jsonBlob, "proyecto.json"); 
+        
+        // 2. Adjuntar la parte 'video' si existe
+        if (videoFile) {
+            // El backend espera una parte llamada 'video'
+            formData.append("video", videoFile, videoFile.name); 
+        } 
 
-    console.log("[v0] createProyectoAction - Response status:", response.status)
+        const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+            method: "POST",
+            headers: {
+                // NO incluir Content-Type: multipart/form-data. 
+                // fetch lo añade automáticamente con el boundary si el body es FormData.
+                Authorization: `Bearer ${token}`, 
+            },
+            body: formData, // ⬅️ Enviamos el objeto FormData directamente
+        });
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.log("[v0] createProyectoAction - Error response:", errorText)
-      throw new Error("Error al crear proyecto")
+        console.log("[v0] createProyectoAction - Response status:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log("[v0] createProyectoAction - Error response:", errorText);
+            throw new Error(`Error al crear proyecto: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        revalidatePath("/admin");
+        return data;
+    } catch (error) {
+        console.error("[v0] Error creating proyecto:", error);
+        throw error;
     }
-
-    const data = await response.json()
-    revalidatePath("/admin")
-    return data
-  } catch (error) {
-    console.error("[v0] Error creating proyecto:", error)
-    throw error
-  }
 }
 
 export async function updateProyectoAction(token: string, id: number, proyecto: CreateProyectoDto) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(proyecto),
-    })
+    try {
+        const formData = new FormData();
+        // Separamos el archivo y los datos JSON
+        const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
 
-    if (!response.ok) {
-      throw new Error("Error al actualizar proyecto")
+        // 1. Crear el Blob para la parte 'proyecto' (JSON)
+        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+            type: 'application/json' 
+        });
+
+        formData.append("proyecto", jsonBlob, "proyecto.json"); 
+        
+        // 2. Adjuntar la parte 'video' si existe
+        if (videoFile) {
+            formData.append("video", videoFile, videoFile.name); 
+        } 
+
+        const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
+            method: "PUT", // ⬅️ PUT method
+            headers: {
+                // NO incluir Content-Type: multipart/form-data.
+                Authorization: `Bearer ${token}`, 
+            },
+            body: formData, // ⬅️ Enviamos el objeto FormData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error al actualizar proyecto: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        revalidatePath("/admin");
+        return data;
+    } catch (error) {
+        console.error("Error updating proyecto:", error);
+        throw error;
     }
-
-    const data = await response.json()
-    revalidatePath("/admin")
-    return data
-  } catch (error) {
-    console.error("Error updating proyecto:", error)
-    throw error
-  }
 }
 
 export async function deleteProyectoAction(token: string, id: number) {
