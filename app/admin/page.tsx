@@ -10,8 +10,8 @@ import { useToast } from "@/hooks/use-toast"
 import { isAdmin, getUser, getToken } from "@/lib/auth"
 import {
   getProyectosAdminAction,
-  createProyectoAction,
-  updateProyectoAction,
+  createProyectoFormDataAction,
+  updateProyectoFormDataAction,
   deleteProyectoAction,
 } from "@/lib/server-actions"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
@@ -63,21 +63,36 @@ export default function AdminPage() {
   }
 
   const handleCreate = async (data: CreateProyectoDto) => {
-    try {
-      const token = getToken()
-      console.log("[v0] handleCreate - Token from localStorage:", token?.substring(0, 20) + "...")
+    try {
+      const token = getToken()
+      
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
 
-      if (!token) {
-        throw new Error("No hay token de autenticación")
+      // 🚨 PASO 1: CONSTRUIR FormData aquí en el CLIENTE 🚨
+      const formData = new FormData();
+      const { videoFile, s3VideoKey, ...proyectoData } = data; // Obtener los datos del formulario
+
+      // Crear Blob JSON y adjuntarlo
+      const jsonBlob = new Blob([JSON.stringify(proyectoData)], { type: 'application/json' });
+      formData.append("proyecto", jsonBlob, "proyecto.json"); 
+      
+      // Adjuntar el archivo de video
+      if (videoFile) {
+          formData.append("video", videoFile, videoFile.name);
       }
-      await createProyectoAction(token, data)
-      toast({
-        title: "Éxito",
-        description: "Proyecto creado correctamente",
-      })
-      setShowForm(false)
-      loadProyectos()
-    } catch (error) {
+
+      // 🚨 PASO 2: LLAMAR A UNA NUEVA SERVER ACTION (que espera FormData)
+      await createProyectoFormDataAction(token, formData); // Usamos una nueva función (ver abajo)
+      
+      toast({
+        title: "Éxito",
+        description: "Proyecto creado correctamente",
+      })
+      setShowForm(false)
+      loadProyectos()
+    } catch (error) {
       console.error("[v0] handleCreate error:", error)
       toast({
         title: "Error",
@@ -88,28 +103,45 @@ export default function AdminPage() {
   }
 
   const handleUpdate = async (data: CreateProyectoDto) => {
-    if (!editingProyecto?.idProyecto) return
+    if (!editingProyecto?.idProyecto) return
 
-    try {
-      const token = getToken()
-      if (!token) {
-        throw new Error("No hay token de autenticación")
+    try {
+      const token = getToken()
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
+
+      // 🚨 PASO 1: CONSTRUIR FormData aquí en el CLIENTE 🚨
+      const formData = new FormData();
+      const { videoFile, s3VideoKey, ...proyectoData } = data; // Obtener los datos del formulario
+
+      // Crear Blob JSON y adjuntarlo
+      const jsonBlob = new Blob([JSON.stringify(proyectoData)], { type: 'application/json' });
+      formData.append("proyecto", jsonBlob, "proyecto.json"); 
+      
+      // Adjuntar el archivo de video
+      if (videoFile) {
+          formData.append("video", videoFile, videoFile.name);
       }
-      await updateProyectoAction(token, editingProyecto.idProyecto, data)
-      toast({
-        title: "Éxito",
-        description: "Proyecto actualizado correctamente",
-      })
-      setEditingProyecto(null)
-      loadProyectos()
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar el proyecto",
-        variant: "destructive",
-      })
-    }
-  }
+      // -----------------------------------------------------
+
+      // 🚨 PASO 2: LLAMAR A UNA NUEVA SERVER ACTION (que espera FormData)
+      await updateProyectoFormDataAction(token, editingProyecto.idProyecto, formData)
+
+      toast({
+        title: "Éxito",
+        description: "Proyecto actualizado correctamente",
+      })
+      setEditingProyecto(null)
+      loadProyectos()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el proyecto",
+        variant: "destructive",
+      })
+    }
+  }
 
   const handleDelete = async (id: number) => {
     try {

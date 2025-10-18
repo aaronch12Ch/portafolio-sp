@@ -78,32 +78,45 @@ export async function createProyectoAction(token: string, proyecto: CreateProyec
         throw error;
     }
 }
-
-export async function updateProyectoAction(token: string, id: number, proyecto: CreateProyectoDto) {
+export async function createProyectoFormDataAction(token: string, formData: FormData) {
     try {
-        const formData = new FormData();
-        // Separamos el archivo y los datos JSON
-        const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
+        // En este punto, 'formData' ya tiene las partes 'proyecto' (JSON) y 'video' (File)
 
-        // 1. Crear el Blob para la parte 'proyecto' (JSON)
-        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-            type: 'application/json' 
-        });
-
-        formData.append("proyecto", jsonBlob, "proyecto.json"); 
-        
-        // 2. Adjuntar la parte 'video' si existe
-        if (videoFile) {
-            formData.append("video", videoFile, videoFile.name); 
-        } 
-
-        const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
-            method: "PUT", // ⬅️ PUT method
+        const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+            method: "POST",
             headers: {
-                // NO incluir Content-Type: multipart/form-data.
+                // NO incluir Content-Type
                 Authorization: `Bearer ${token}`, 
             },
-            body: formData, // ⬅️ Enviamos el objeto FormData
+            body: formData, // Enviar el FormData
+        });
+
+        // ... lógica de manejo de respuesta y revalidatePath ...
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error al crear proyecto: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        revalidatePath("/admin");
+        return data;
+
+    } catch (error) {
+        console.error("[v0] Error creating proyecto with FormData:", error);
+        throw error;
+    }
+}
+export async function updateProyectoFormDataAction(token: string, id: number, formData: FormData) {
+    try {
+        
+        const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
+            method: "PUT", // ⬅️ Método PUT
+            headers: {
+                // NO incluir Content-Type
+                Authorization: `Bearer ${token}`, 
+            },
+            body: formData, // ⬅️ Enviar el FormData con JSON y File
         });
 
         if (!response.ok) {
@@ -114,8 +127,9 @@ export async function updateProyectoAction(token: string, id: number, proyecto: 
         const data = await response.json();
         revalidatePath("/admin");
         return data;
+
     } catch (error) {
-        console.error("Error updating proyecto:", error);
+        console.error("[v0] Error updating proyecto with FormData:", error);
         throw error;
     }
 }
