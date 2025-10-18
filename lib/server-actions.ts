@@ -1,5 +1,6 @@
 "use server"
 
+import { File } from 'buffer';
 import { revalidatePath } from "next/cache"
 import type {  Proyecto } from "./api"
 
@@ -33,85 +34,108 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
 }
 
 
-export async function createProyectoFormDataAction(token: string, formData: FormData) {
+export async function createProyectoServer(token: string, proyectoData: any, videoFile: File | null) {
     try {
-      
-        console.log(`[v0] 🕵️ Contenido del FormData:`);
+        const formData = new FormData();
+
+        console.log(`[v0] 🛠️ Intentando crear Proyecto`);
+        console.log(`[v0] 🕵️ Recibido proyectoData (JSON):`, proyectoData); // <-- Ahora puedes ver el JSON simple
         
-        // 🚨 MÉTODO PARA INSPECCIONAR FormData EN NODE.JS
-        for (const [key, value] of formData.entries()) {
-            if (value instanceof File) {
-                // Para archivos, imprime solo el nombre, tamaño y tipo
-                console.log(`[v0]   - Clave: ${key}, Valor: [ARCHIVO] - Nombre: ${value.name}, Tamaño: ${value.size} bytes, Tipo: ${value.type}`);
-            } else {
-                // Para campos de texto (como el Blob JSON), imprime el valor
-                console.log(`[v0]   - Clave: ${key}, Valor: ${value}`);
-            }
+        // 1. Crear el Blob JSON y adjuntarlo
+        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+            type: 'application/json' 
+        });
+        // IMPORTANTE: NO uses el nombre de archivo aquí, solo si tu backend lo requiere estrictamente.
+        formData.append("proyecto", jsonBlob); 
+        
+        // 2. Adjuntar el archivo de video
+        if (videoFile) {
+            // Asegúrate de que el archivo que viene del cliente es un tipo que FormData pueda usar en Node.js
+            // Si esto falla, intentaremos una estrategia diferente (Server Action sin argumentos)
+            formData.append("video", videoFile, videoFile.name); 
+            console.log(`[v0] 🕵️ Adjuntado Video: ${videoFile.name}`);
         }
-        console.log(`[v0] -------------------------------------`);
-        // En este punto, 'formData' ya tiene las partes 'proyecto' (JSON) y 'video' (File)
-        console.log(formData);
+
+        // ... El resto del fetch sigue igual...
         const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
-            method: "POST",
+            method: "POST", 
             headers: {
-                // NO incluir Content-Type
                 Authorization: `Bearer ${token}`, 
             },
-            body: formData, // Enviar el FormData
+            body: formData, // Enviar el FormData construido en el servidor
         });
 
-        // ... lógica de manejo de respuesta y revalidatePath ...
-        
+        // ... Lógica de respuesta ...
         if (!response.ok) {
             const errorText = await response.text();
+            console.error(`[v0] ❌ Fallo en la creación: ${response.status} - Respuesta: ${errorText}`);
             throw new Error(`Error al crear proyecto: ${response.status} ${errorText}`);
         }
-
-        const data = await response.json();
-        revalidatePath("/admin");
-        return data;
-
+        // ...
+        
     } catch (error) {
-        console.error("[v0] Error creating proyecto with FormData:", error);
+        console.error("[v0] Error creating proyecto:", error);
         throw error;
     }
 }
-export async function updateProyectoFormDataAction(token: string, id: number, formData: FormData) {
+interface ProyectoUpdateData {
+    nombreProyecto: string;
+    descripcionProyecto: string;
+    urlImagen: string;
+    url: string;
+    disponibleProyecto?: boolean;
+    s3VideoKey?: string | null;
+}
+export async function updateProyectoServer(
+    token: string, 
+    id: number, 
+    proyectoData: ProyectoUpdateData, 
+    videoFile: File | null
+) {
     try {
-        console.log(`[v0] 🛠️ Intentando actualizar Proyecto ID: ${id}`);
-        console.log(`[v0] 🕵️ Contenido del FormData:`);
+        const formData = new FormData(); // ⬅️ FormData se crea AHORA en el Servidor
         
-        // 🚨 MÉTODO PARA INSPECCIONAR FormData EN NODE.JS
-        for (const [key, value] of formData.entries()) {
-            if (value instanceof File) {
-                // Para archivos, imprime solo el nombre, tamaño y tipo
-                console.log(`[v0]   - Clave: ${key}, Valor: [ARCHIVO] - Nombre: ${value.name}, Tamaño: ${value.size} bytes, Tipo: ${value.type}`);
-            } else {
-                // Para campos de texto (como el Blob JSON), imprime el valor
-                console.log(`[v0]   - Clave: ${key}, Valor: ${value}`);
-            }
+        console.log(`[v0] 🛠️ Intentando actualizar Proyecto ID: ${id}`);
+        console.log(`[v0] 🕵️ Recibido proyectoData (JSON):`, proyectoData); // ✅ Esto te dará visibilidad
+        
+        // 1. Crear el Blob JSON y adjuntarlo
+        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
+            type: 'application/json' 
+        });
+        formData.append("proyecto", jsonBlob); // 👈 Quita el nombre de archivo ("proyecto.json") como prueba
+        
+        // 2. Adjuntar el archivo de video (si existe)
+        if (videoFile) {
+            // Nota: El objeto File que viene del cliente es serializado por Next.js
+            // Usamos 'videoFile.name' para el nombre del archivo en el FormData
+            formData.append("video", videoFile, videoFile.name); 
+            console.log(`[v0] 🕵️ Adjuntado Video: ${videoFile.name}`);
         }
-        console.log(`[v0] -------------------------------------`);
+        
+        // -----------------------------------------------------------------
+
         const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
-            method: "PUT", // ⬅️ Método PUT
+            method: "PUT",
             headers: {
-                // NO incluir Content-Type
                 Authorization: `Bearer ${token}`, 
             },
-            body: formData, // ⬅️ Enviar el FormData con JSON y File
+            body: formData, // Enviar el FormData construido en el servidor
         });
 
+        // ... Lógica de respuesta y manejo de errores ...
         if (!response.ok) {
             const errorText = await response.text();
+            console.error(`[v0] ❌ Fallo en la actualización: ${response.status} - Respuesta: ${errorText}`);
             throw new Error(`Error al actualizar proyecto: ${response.status} ${errorText}`);
         }
 
+        console.log(`[v0] ✅ Proyecto ID: ${id} actualizado con éxito.`);
         const data = await response.json();
         revalidatePath("/admin");
         return data;
 
     } catch (error) {
-        console.error("[v0] Error updating proyecto with FormData:", error);
+        console.error("[v0] Error updating proyecto:", error);
         throw error;
     }
 }
