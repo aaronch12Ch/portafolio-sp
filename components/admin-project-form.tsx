@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { VideoDisplay } from "@/components/VideoDisplay"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
@@ -117,6 +118,8 @@ const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="s3VideoKey">Video actual:</Label>
+            <VideoDisplay s3VideoKey={proyecto.s3VideoKey} />
             <Label htmlFor="s3VideoKey">Subir Video (Opcional)</Label>
             <Input
               id="s3VideoKey"
