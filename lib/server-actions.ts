@@ -1,8 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import type { CreateProyectoDto, Proyecto} from "./api"
-import { createProyecto, updateProyecto } from "./api"
+import type { CreateProyectoDto, Proyecto } from "./api"
 
 const API_BASE_URL = "https://portafolio-1-q45o.onrender.com/api"
 
@@ -35,38 +34,57 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
 
 export async function createProyectoAction(token: string, proyecto: CreateProyectoDto) {
   try {
-    console.log("[v0] createProyectoAction - Proyecto data:", proyecto)
-    
-    // **🚨 CÓDIGO CRÍTICO: LLAMAR A LA FUNCIÓN CON LOGICA DE FORM DATA**
-    // La función 'createProyecto' ya obtiene el token, por lo que solo le pasamos el proyecto.
-    const data = await createProyecto(proyecto); 
-    
-    console.log("[v0] createProyectoAction - Proyecto creado con éxito")
+    console.log("[v0] createProyectoAction - Token length:", token?.length)
+    console.log("[v0] createProyectoAction - Token preview:", token?.substring(0, 20) + "...")
+    console.log("[v0] createProyectoAction - Proyecto data:", JSON.stringify(proyecto))
 
+    const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(proyecto),
+    })
+
+    console.log("[v0] createProyectoAction - Response status:", response.status)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.log("[v0] createProyectoAction - Error response:", errorText)
+      throw new Error("Error al crear proyecto")
+    }
+
+    const data = await response.json()
     revalidatePath("/admin")
     return data
   } catch (error) {
     console.error("[v0] Error creating proyecto:", error)
-    // Lanza el error capturado por Axios para que se propague al cliente
-    throw error 
+    throw error
   }
 }
 
-export async function updateProyectoAction(id: number, proyecto: CreateProyectoDto) {
+export async function updateProyectoAction(token: string, id: number, proyecto: CreateProyectoDto) {
   try {
-    // 🚨 LLAMADA CRÍTICA: Llama a la función que usa FormData y Axios.
-    // La función 'updateProyecto' en api.ts ya obtiene el token internamente.
-    const data = await updateProyecto(id, proyecto); 
+    const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(proyecto),
+    })
 
-    console.log("[v0] updateProyectoAction - Proyecto actualizado con éxito")
-    
-    // Si la llamada fue exitosa, revalida la ruta
+    if (!response.ok) {
+      throw new Error("Error al actualizar proyecto")
+    }
+
+    const data = await response.json()
     revalidatePath("/admin")
     return data
   } catch (error) {
     console.error("Error updating proyecto:", error)
-    // Lanza el error para que el cliente lo maneje
-    throw error 
+    throw error
   }
 }
 
