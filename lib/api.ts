@@ -1,4 +1,5 @@
 import { getToken } from "./auth"
+import { File } from 'buffer';
 import axios from 'axios';
 const API_BASE_URL = "https://portafolio-1-q45o.onrender.com/api"
 
