@@ -35,6 +35,20 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
 
 export async function createProyectoFormDataAction(token: string, formData: FormData) {
     try {
+      
+        console.log(`[v0] 🕵️ Contenido del FormData:`);
+        
+        // 🚨 MÉTODO PARA INSPECCIONAR FormData EN NODE.JS
+        for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                // Para archivos, imprime solo el nombre, tamaño y tipo
+                console.log(`[v0]   - Clave: ${key}, Valor: [ARCHIVO] - Nombre: ${value.name}, Tamaño: ${value.size} bytes, Tipo: ${value.type}`);
+            } else {
+                // Para campos de texto (como el Blob JSON), imprime el valor
+                console.log(`[v0]   - Clave: ${key}, Valor: ${value}`);
+            }
+        }
+        console.log(`[v0] -------------------------------------`);
         // En este punto, 'formData' ya tiene las partes 'proyecto' (JSON) y 'video' (File)
         console.log(formData);
         const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
@@ -64,7 +78,20 @@ export async function createProyectoFormDataAction(token: string, formData: Form
 }
 export async function updateProyectoFormDataAction(token: string, id: number, formData: FormData) {
     try {
-        console.log(formData);
+        console.log(`[v0] 🛠️ Intentando actualizar Proyecto ID: ${id}`);
+        console.log(`[v0] 🕵️ Contenido del FormData:`);
+        
+        // 🚨 MÉTODO PARA INSPECCIONAR FormData EN NODE.JS
+        for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                // Para archivos, imprime solo el nombre, tamaño y tipo
+                console.log(`[v0]   - Clave: ${key}, Valor: [ARCHIVO] - Nombre: ${value.name}, Tamaño: ${value.size} bytes, Tipo: ${value.type}`);
+            } else {
+                // Para campos de texto (como el Blob JSON), imprime el valor
+                console.log(`[v0]   - Clave: ${key}, Valor: ${value}`);
+            }
+        }
+        console.log(`[v0] -------------------------------------`);
         const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
             method: "PUT", // ⬅️ Método PUT
             headers: {
@@ -91,6 +118,7 @@ export async function updateProyectoFormDataAction(token: string, id: number, fo
 
 export async function deleteProyectoAction(token: string, id: number) {
   try {
+
     const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
       method: "DELETE",
       headers: {
