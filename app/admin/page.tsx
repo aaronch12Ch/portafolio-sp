@@ -7,13 +7,13 @@ import { AdminProjectForm } from "@/components/admin-project-form"
 import { AdminProjectList } from "@/components/admin-project-list"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
-import { isAdmin, getUser } from "@/lib/auth"
-import { 
-  getProyectosAdmin, 
-  createProyecto, 
-  updateProyecto, 
-  deleteProyecto 
-} from "@/lib/api"  // ← Importar directamente de api.ts
+import { isAdmin, getUser, getToken } from "@/lib/auth"
+import {
+  getProyectosAdminAction,
+  createProyectoAction,
+  updateProyectoAction,
+  deleteProyectoAction,
+} from "@/lib/server-actions"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
 import { Loader2, Plus } from "lucide-react"
 
@@ -42,17 +42,19 @@ export default function AdminPage() {
 
   const loadProyectos = async () => {
     try {
-      console.log("[v0] loadProyectos - Cargando proyectos...");
+      const token = getToken()
+      console.log("[v0] loadProyectos - Token from localStorage:", token?.substring(0, 20) + "...")
 
-      // ✅ Llamar directamente a la función de api.ts
-      const data = await getProyectosAdmin();
-      setProyectos(data);
-      console.log("[v0] Proyectos cargados:", data.length);
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
+      const data = await getProyectosAdminAction(token)
+      setProyectos(data)
     } catch (error) {
-      console.error("[v0] loadProyectos error:", error);
+      console.error("[v0] loadProyectos error:", error)
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "No se pudieron cargar los proyectos",
+        description: "No se pudieron cargar los proyectos",
         variant: "destructive",
       })
     } finally {
@@ -62,23 +64,24 @@ export default function AdminPage() {
 
   const handleCreate = async (data: CreateProyectoDto) => {
     try {
-      console.log("[v0] handleCreate - Creando proyecto...");
-      console.log("[v0] Data:", data);
+      const token = getToken()
+      console.log("[v0] handleCreate - Token from localStorage:", token?.substring(0, 20) + "...")
 
-      // ✅ Llamar directamente a la función de api.ts
-      await createProyecto(data);
-      
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
+      await createProyectoAction(token, data)
       toast({
         title: "Éxito",
         description: "Proyecto creado correctamente",
       })
       setShowForm(false)
-      await loadProyectos()
+      loadProyectos()
     } catch (error) {
-      console.error("[v0] handleCreate error:", error);
+      console.error("[v0] handleCreate error:", error)
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "No se pudo crear el proyecto",
+        description: "No se pudo crear el proyecto",
         variant: "destructive",
       })
     }
@@ -88,46 +91,42 @@ export default function AdminPage() {
     if (!editingProyecto?.idProyecto) return
 
     try {
-      console.log("[v0] handleUpdate - Actualizando proyecto ID:", editingProyecto.idProyecto);
-      
-      // ✅ Llamar directamente a la función de api.ts
-      await updateProyecto(editingProyecto.idProyecto, data);
-      
+      const token = getToken()
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
+      await updateProyectoAction(token, editingProyecto.idProyecto, data)
       toast({
         title: "Éxito",
         description: "Proyecto actualizado correctamente",
       })
       setEditingProyecto(null)
-      await loadProyectos()
+      loadProyectos()
     } catch (error) {
-      console.error("[v0] handleUpdate error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "No se pudo actualizar el proyecto",
+        description: "No se pudo actualizar el proyecto",
         variant: "destructive",
       })
     }
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("¿Estás seguro de eliminar este proyecto?")) return;
-
     try {
-      console.log("[v0] handleDelete - Eliminando proyecto ID:", id);
-      
-      // ✅ Llamar directamente a la función de api.ts
-      await deleteProyecto(id);
-      
+      const token = getToken()
+      if (!token) {
+        throw new Error("No hay token de autenticación")
+      }
+      await deleteProyectoAction(token, id)
       toast({
         title: "Éxito",
         description: "Proyecto eliminado correctamente",
       })
-      await loadProyectos()
+      loadProyectos()
     } catch (error) {
-      console.error("[v0] handleDelete error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "No se pudo eliminar el proyecto",
+        description: "No se pudo eliminar el proyecto",
         variant: "destructive",
       })
     }
@@ -177,11 +176,7 @@ export default function AdminPage() {
 
             <div>
               <h2 className="text-xl font-semibold mb-4">Proyectos Existentes</h2>
-              <AdminProjectList 
-                proyectos={proyectos} 
-                onEdit={setEditingProyecto} 
-                onDelete={handleDelete} 
-              />
+              <AdminProjectList proyectos={proyectos} onEdit={setEditingProyecto} onDelete={handleDelete} />
             </div>
           </div>
         </div>
