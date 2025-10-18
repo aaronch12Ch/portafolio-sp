@@ -32,52 +32,7 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
   }
 }
 
-export async function createProyectoAction(token: string, proyecto: CreateProyectoDto) {
-    try {
-        const formData = new FormData();
-        // Separamos el archivo y los datos JSON
-        const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
 
-        // 1. Crear el Blob para la parte 'proyecto' (JSON)
-        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-            type: 'application/json' 
-        });
-        
-        // El backend espera una parte llamada 'proyecto'
-        formData.append("proyecto", jsonBlob, "proyecto.json"); 
-        
-        // 2. Adjuntar la parte 'video' si existe
-        if (videoFile) {
-            // El backend espera una parte llamada 'video'
-            formData.append("video", videoFile, videoFile.name); 
-        } 
-
-        const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
-            method: "POST",
-            headers: {
-                // NO incluir Content-Type: multipart/form-data. 
-                // fetch lo añade automáticamente con el boundary si el body es FormData.
-                Authorization: `Bearer ${token}`, 
-            },
-            body: formData, // ⬅️ Enviamos el objeto FormData directamente
-        });
-
-        console.log("[v0] createProyectoAction - Response status:", response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.log("[v0] createProyectoAction - Error response:", errorText);
-            throw new Error(`Error al crear proyecto: ${response.status} ${errorText}`);
-        }
-
-        const data = await response.json();
-        revalidatePath("/admin");
-        return data;
-    } catch (error) {
-        console.error("[v0] Error creating proyecto:", error);
-        throw error;
-    }
-}
 export async function createProyectoFormDataAction(token: string, formData: FormData) {
     try {
         // En este punto, 'formData' ya tiene las partes 'proyecto' (JSON) y 'video' (File)
