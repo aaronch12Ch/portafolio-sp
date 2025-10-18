@@ -36,7 +36,7 @@ export async function getProyectosAdminAction(token: string): Promise<Proyecto[]
 export async function createProyectoFormDataAction(token: string, formData: FormData) {
     try {
         // En este punto, 'formData' ya tiene las partes 'proyecto' (JSON) y 'video' (File)
-
+        console.log(formData);
         const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
             method: "POST",
             headers: {
@@ -64,7 +64,7 @@ export async function createProyectoFormDataAction(token: string, formData: Form
 }
 export async function updateProyectoFormDataAction(token: string, id: number, formData: FormData) {
     try {
-        
+        console.log(formData);
         const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
             method: "PUT", // ⬅️ Método PUT
             headers: {
