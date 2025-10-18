@@ -10,8 +10,8 @@ import { useToast } from "@/hooks/use-toast"
 import { isAdmin, getUser, getToken } from "@/lib/auth"
 import {
   getProyectosAdminAction,
-  createProyectoServer,
-  updateProyectoServer,
+  createProyectoNativeAction,
+  updateProyectoNativeAction,
   deleteProyectoAction,
 } from "@/lib/server-actions"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
@@ -86,7 +86,46 @@ export default function AdminPage() {
       })
     }
   }
+const handleSubmitForm = async (data: CreateProyectoDto) => {
+    // 1. Prepara el token y el ID
+    const token = getToken();
+    if (!token) {
+        toast({ title: "Error", description: "No hay token." });
+        return;
+    }
 
+    // 2. Construye el FormData como lo tenías antes (en el cliente)
+    const formData = new FormData();
+    const { videoFile, s3VideoKey, ...proyectoData } = data; 
+    
+    formData.append("token", token); // 👈 Campo oculto: Token
+    formData.append("idProyecto", editingProyecto?.idProyecto?.toString() || ""); // 👈 Campo oculto: ID
+
+    // El JSON sigue siendo un string, ya que Blob falla.
+    formData.append("proyecto", JSON.stringify(proyectoData)); 
+    
+    if (videoFile) {
+        formData.append("video", videoFile, videoFile.name);
+    }
+
+    // 3. Llama al action nativo (no a la función con el 'action' prop)
+    try {
+        if (editingProyecto) {
+            await updateProyectoNativeAction(formData); // Usar la nueva acción
+        } else {
+            await createProyectoNativeAction(formData); // Usar la nueva acción
+        }
+        
+        // Manejo de éxito
+        toast({ title: "Éxito", description: "Proyecto guardado correctamente" });
+        setShowForm(false);
+        setEditingProyecto(null);
+        loadProyectos();
+    } catch (error) {
+        // Manejo de error
+        toast({ title: "Error", description: "No se pudo guardar el proyecto." });
+    }
+};
   const handleUpdate = async (data: CreateProyectoDto) => {
     if (!editingProyecto?.idProyecto) return
 
@@ -181,7 +220,7 @@ export default function AdminPage() {
             {(showForm || editingProyecto) && (
               <AdminProjectForm
                 proyecto={editingProyecto || undefined}
-                onSubmit={editingProyecto ? handleUpdate : handleCreate}
+                onSubmit={handleSubmitForm}
                 onCancel={() => {
                   setShowForm(false)
                   setEditingProyecto(null)
