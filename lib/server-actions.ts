@@ -1,6 +1,6 @@
 "use server"
 
-import { File, Blob} from 'buffer';
+import { File, Blob} from 'node:buffer';
 import { revalidatePath } from "next/cache"
 import type {  Proyecto } from "./api"
 
@@ -42,11 +42,11 @@ export async function createProyectoServer(token: string, proyectoData: any, vid
         console.log(`[v0] 🕵️ Recibido proyectoData (JSON):`, proyectoData); // <-- Ahora puedes ver el JSON simple
         
         // 1. Crear el Blob JSON y adjuntarlo
-        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-            type: 'application/json' 
-        });
-        // IMPORTANTE: NO uses el nombre de archivo aquí, solo si tu backend lo requiere estrictamente.
-        formData.append("proyecto", jsonBlob); 
+        const jsonString = JSON.stringify(proyectoData);
+        
+        // Envía el string. Algunos backends (como Spring Boot) pueden intentar 
+        // inferir el tipo o usar el nombre de archivo para identificar esta parte como JSON.
+        formData.append("proyecto", jsonString, "proyecto.json");
         
         // 2. Adjuntar el archivo de video
         if (videoFile) {
@@ -99,10 +99,10 @@ export async function updateProyectoServer(
         console.log(`[v0] 🕵️ Recibido proyectoData (JSON):`, proyectoData); // ✅ Esto te dará visibilidad
         
         // 1. Crear el Blob JSON y adjuntarlo
-        const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-            type: 'application/json' 
-        });
-        formData.append("proyecto", jsonBlob); // 👈 Quita el nombre de archivo ("proyecto.json") como prueba
+        const jsonString = JSON.stringify(proyectoData);
+        
+        // Envía el string.
+        formData.append("proyecto", jsonString, "proyecto.json");// 👈 Quita el nombre de archivo ("proyecto.json") como prueba
         
         // 2. Adjuntar el archivo de video (si existe)
         if (videoFile) {
