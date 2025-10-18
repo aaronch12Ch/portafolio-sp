@@ -1,6 +1,6 @@
 "use server"
 
-import { File } from 'buffer';
+import { File, Blob} from 'buffer';
 import { revalidatePath } from "next/cache"
 import type {  Proyecto } from "./api"
 
