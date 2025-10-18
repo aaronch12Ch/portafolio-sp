@@ -10,8 +10,8 @@ import { useToast } from "@/hooks/use-toast"
 import { isAdmin, getUser, getToken } from "@/lib/auth"
 import {
   getProyectosAdminAction,
-  createProyectoNativeAction,
-  updateProyectoNativeAction,
+  createProyectoServer,
+  updateProyectoServer,
   deleteProyectoAction,
 } from "@/lib/server-actions"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
@@ -86,46 +86,7 @@ export default function AdminPage() {
       })
     }
   }
-  
-const token = getToken() // Asegúrate de que el token esté disponible para pasarlo al formulario
 
-// 🚨 Nueva función para manejar el envío y la respuesta del formulario nativo
-const handleFormAction = async (formData: FormData) => {
-    // 1. Determinar qué acción llamar
-    const actionToCall = editingProyecto
-        ? updateProyectoNativeAction 
-        : createProyectoNativeAction; 
-
-    try {
-        // 2. Ejecutar la Server Action (el formData viene directamente del formulario)
-        const result = await actionToCall(formData);
-
-        if (result.success) {
-            toast({
-                title: "Éxito",
-                description: `Proyecto ${editingProyecto ? "actualizado" : "creado"} correctamente`,
-            });
-            setEditingProyecto(null);
-            setShowForm(false);
-            loadProyectos(); // Recargar la lista
-        } else {
-            // Manejar errores devueltos por la Server Action
-            toast({
-                title: "Error",
-                description: result.error || "Hubo un error al procesar el proyecto.",
-                variant: "destructive",
-            });
-        }
-    } catch (error) {
-        // Manejar errores inesperados
-        console.error("[v0] handleFormAction catch error:", error);
-        toast({
-            title: "Error",
-            description: "No se pudo completar la operación. Verifique la consola.",
-            variant: "destructive",
-        });
-    }
-};
   const handleUpdate = async (data: CreateProyectoDto) => {
     if (!editingProyecto?.idProyecto) return
 
@@ -217,15 +178,14 @@ const handleFormAction = async (formData: FormData) => {
           </div>
 
           <div className="space-y-8">
-            {(showForm || editingProyecto) && token && ( // Asegúrate de tener el token
-        <AdminProjectForm
-            proyecto={editingProyecto || undefined}
-            token={token} // 🚨 Pasar el token como prop
-            action={handleFormAction} // 🚨 Pasar la función de acción unificada
-            onCancel={() => {
-                setShowForm(false)
-                setEditingProyecto(null)
-            }}
+            {(showForm || editingProyecto) && (
+              <AdminProjectForm
+                proyecto={editingProyecto || undefined}
+                onSubmit={editingProyecto ? handleUpdate : handleCreate}
+                onCancel={() => {
+                  setShowForm(false)
+                  setEditingProyecto(null)
+                }}
               />
             )}
 
