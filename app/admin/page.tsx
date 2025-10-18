@@ -86,44 +86,44 @@ export default function AdminPage() {
       })
     }
   }
-const handleSubmitForm = async (data: CreateProyectoDto) => {
-    // 1. Prepara el token y el ID
-    const token = getToken();
-    if (!token) {
-        toast({ title: "Error", description: "No hay token." });
-        return;
-    }
+  
+const token = getToken() // Asegúrate de que el token esté disponible para pasarlo al formulario
 
-    // 2. Construye el FormData como lo tenías antes (en el cliente)
-    const formData = new FormData();
-    const { videoFile, s3VideoKey, ...proyectoData } = data; 
-    
-    formData.append("token", token); // 👈 Campo oculto: Token
-    formData.append("idProyecto", editingProyecto?.idProyecto?.toString() || ""); // 👈 Campo oculto: ID
+// 🚨 Nueva función para manejar el envío y la respuesta del formulario nativo
+const handleFormAction = async (formData: FormData) => {
+    // 1. Determinar qué acción llamar
+    const actionToCall = editingProyecto
+        ? updateProyectoNativeAction 
+        : createProyectoNativeAction; 
 
-    // El JSON sigue siendo un string, ya que Blob falla.
-    formData.append("proyecto", JSON.stringify(proyectoData)); 
-    
-    if (videoFile) {
-        formData.append("video", videoFile, videoFile.name);
-    }
-
-    // 3. Llama al action nativo (no a la función con el 'action' prop)
     try {
-        if (editingProyecto) {
-            await updateProyectoNativeAction(formData); // Usar la nueva acción
+        // 2. Ejecutar la Server Action (el formData viene directamente del formulario)
+        const result = await actionToCall(formData);
+
+        if (result.success) {
+            toast({
+                title: "Éxito",
+                description: `Proyecto ${editingProyecto ? "actualizado" : "creado"} correctamente`,
+            });
+            setEditingProyecto(null);
+            setShowForm(false);
+            loadProyectos(); // Recargar la lista
         } else {
-            await createProyectoNativeAction(formData); // Usar la nueva acción
+            // Manejar errores devueltos por la Server Action
+            toast({
+                title: "Error",
+                description: result.error || "Hubo un error al procesar el proyecto.",
+                variant: "destructive",
+            });
         }
-        
-        // Manejo de éxito
-        toast({ title: "Éxito", description: "Proyecto guardado correctamente" });
-        setShowForm(false);
-        setEditingProyecto(null);
-        loadProyectos();
     } catch (error) {
-        // Manejo de error
-        toast({ title: "Error", description: "No se pudo guardar el proyecto." });
+        // Manejar errores inesperados
+        console.error("[v0] handleFormAction catch error:", error);
+        toast({
+            title: "Error",
+            description: "No se pudo completar la operación. Verifique la consola.",
+            variant: "destructive",
+        });
     }
 };
   const handleUpdate = async (data: CreateProyectoDto) => {
@@ -217,14 +217,15 @@ const handleSubmitForm = async (data: CreateProyectoDto) => {
           </div>
 
           <div className="space-y-8">
-            {(showForm || editingProyecto) && (
-              <AdminProjectForm
-                proyecto={editingProyecto || undefined}
-                onSubmit={handleSubmitForm}
-                onCancel={() => {
-                  setShowForm(false)
-                  setEditingProyecto(null)
-                }}
+            {(showForm || editingProyecto) && token && ( // Asegúrate de tener el token
+        <AdminProjectForm
+            proyecto={editingProyecto || undefined}
+            token={token} // 🚨 Pasar el token como prop
+            action={handleFormAction} // 🚨 Pasar la función de acción unificada
+            onCancel={() => {
+                setShowForm(false)
+                setEditingProyecto(null)
+            }}
               />
             )}
 
