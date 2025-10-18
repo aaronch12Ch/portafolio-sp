@@ -107,7 +107,7 @@ export default function AdminPage() {
             token, 
             editingProyecto.idProyecto, 
             proyectoData, // Pasa el objeto JSON simple
-            videoFile      // Pasa el objeto File o null
+            null    // Pasa el objeto File o null
         )
 
         toast({
