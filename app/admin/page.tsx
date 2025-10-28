@@ -10,10 +10,6 @@ import { useToast } from "@/hooks/use-toast"
 import { isAdmin, getUser, getToken } from "@/lib/auth"
 import {
   getProyectosAdminAction,
-  createProyectoAction,
-  updateProyectoAction,
-  uploadVideoAction,
-  deleteVideoAction,
   deleteProyectoAction,
 } from "@/lib/server-actions"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
@@ -79,14 +75,48 @@ export default function AdminPage() {
       console.log("[Admin] 📦 Video file:", videoFile?.name || "ninguno")
       console.log("[Admin] 📦 Datos del proyecto (JSON):", proyectoData)
 
-      // 1. Crear el proyecto primero (sin video)
-      const nuevoProyecto = await createProyectoAction(token, proyectoData)
+      // 1. Crear el proyecto primero (sin video) - usando fetch directo
+      const createResponse = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/admin", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(proyectoData),
+      })
+
+      if (!createResponse.ok) {
+        const errorText = await createResponse.text()
+        console.error("[Admin] ❌ Error al crear:", createResponse.status, errorText)
+        throw new Error(`Error al crear proyecto: ${errorText}`)
+      }
+
+      const nuevoProyecto = await createResponse.json()
       console.log("[Admin] ✅ Proyecto creado con ID:", nuevoProyecto.idProyecto)
 
       // 2. Si hay video, subirlo después
       if (videoFile && nuevoProyecto.idProyecto) {
         console.log("[Admin] 📹 Subiendo video...")
-        await uploadVideoAction(token, nuevoProyecto.idProyecto, videoFile)
+        const formData = new FormData()
+        formData.append("video", videoFile)
+
+        const videoResponse = await fetch(
+          `https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${nuevoProyecto.idProyecto}/video`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        )
+
+        if (!videoResponse.ok) {
+          const errorText = await videoResponse.text()
+          console.error("[Admin] ❌ Error al subir video:", videoResponse.status, errorText)
+          throw new Error(`Error al subir video: ${errorText}`)
+        }
+
         console.log("[Admin] ✅ Video subido exitosamente")
       }
 
@@ -125,14 +155,50 @@ export default function AdminPage() {
       console.log("[Admin] 📦 Video file:", videoFile?.name || "ninguno")
       console.log("[Admin] 📦 Datos del proyecto (JSON):", proyectoData)
 
-      // 1. Actualizar el proyecto primero (sin video)
-      await updateProyectoAction(token, editingProyecto.idProyecto, proyectoData)
+      // 1. Actualizar el proyecto primero (sin video) - usando fetch directo
+      const updateResponse = await fetch(
+        `https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${editingProyecto.idProyecto}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(proyectoData),
+        }
+      )
+
+      if (!updateResponse.ok) {
+        const errorText = await updateResponse.text()
+        console.error("[Admin] ❌ Error al actualizar:", updateResponse.status, errorText)
+        throw new Error(`Error al actualizar proyecto: ${errorText}`)
+      }
+
       console.log("[Admin] ✅ Datos del proyecto actualizados")
 
       // 2. Si hay un nuevo video, subirlo (esto reemplaza el anterior automáticamente)
       if (videoFile) {
         console.log("[Admin] 📹 Subiendo nuevo video...")
-        await uploadVideoAction(token, editingProyecto.idProyecto, videoFile)
+        const formData = new FormData()
+        formData.append("video", videoFile)
+
+        const videoResponse = await fetch(
+          `https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${editingProyecto.idProyecto}/video`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        )
+
+        if (!videoResponse.ok) {
+          const errorText = await videoResponse.text()
+          console.error("[Admin] ❌ Error al subir video:", videoResponse.status, errorText)
+          throw new Error(`Error al subir video: ${errorText}`)
+        }
+
         console.log("[Admin] ✅ Video actualizado exitosamente")
       }
 
@@ -162,7 +228,23 @@ export default function AdminPage() {
       }
 
       console.log("[Admin] 🗑️ Eliminando video del proyecto ID:", id)
-      await deleteVideoAction(token, id)
+      
+      const response = await fetch(
+        `https://portafolio-1-q45o.onrender.com/api/proyectos/admin/${id}/video`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("[Admin] ❌ Error al eliminar video:", response.status, errorText)
+        throw new Error(`Error al eliminar video: ${errorText}`)
+      }
+
       console.log("[Admin] ✅ Video eliminado")
 
       toast({
