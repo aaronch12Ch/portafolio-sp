@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,25 +8,24 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { VideoDisplay } from "@/components/VideoDisplay"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
+import { Loader2, Upload, X } from "lucide-react"
 import type { Proyecto, CreateProyectoDto } from "@/lib/api"
 
 interface AdminProjectFormProps {
   proyecto?: Proyecto
-  onSubmit: (data: CreateProyectoDto) => Promise<void>
+  onSubmit: (data: CreateProyectoDto & { videoFile?: File | null }) => Promise<void>
   onCancel?: () => void
 }
 
 export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectFormProps) {
   const [loading, setLoading] = useState(false)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
   const [formData, setFormData] = useState<CreateProyectoDto>({
     nombreProyecto: proyecto?.nombreProyecto || "",
     descripcionProyecto: proyecto?.descripcionProyecto || "",
     urlImagen: proyecto?.urlImagen || "",
     url: proyecto?.url || "",
-    disponibleProyecto: proyecto?.disponibleProyecto ?? true, 
-    s3VideoKey: proyecto?.s3VideoKey || null, 
-    videoFile: null, 
+    disponibleProyecto: proyecto?.disponibleProyecto ?? true,
   })
   const [imageUrlError, setImageUrlError] = useState("")
 
@@ -42,7 +40,11 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     setImageUrlError("")
     setLoading(true)
     try {
-      await onSubmit(formData)
+      // Enviar datos del proyecto + archivo de video (si existe)
+      await onSubmit({
+        ...formData,
+        videoFile: videoFile,
+      })
     } finally {
       setLoading(false)
     }
@@ -56,14 +58,25 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
       setImageUrlError("")
     }
   }
-  // Función que maneja la selección de archivo
-const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 🚨 CAMBIO 2: Almacenar el archivo en 'videoFile'
-    setFormData({ ...formData, videoFile: e.target.files ? e.target.files[0] : null })
-}
+
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    setVideoFile(file)
+    console.log("[Form] Archivo de video seleccionado:", file?.name)
+  }
+
+  const handleRemoveVideo = () => {
+    setVideoFile(null)
+    // Limpiar el input file
+    const input = document.getElementById("videoFile") as HTMLInputElement
+    if (input) input.value = ""
+    console.log("[Form] Archivo de video removido")
+  }
+
   const handleDisponibleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, disponibleProyecto: e.target.checked })
   }
+
   return (
     <Card>
       <CardHeader>
@@ -118,45 +131,6 @@ const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="s3VideoKey">Video actual (Opcional)</Label>
-            <VideoDisplay s3VideoKey={proyecto.s3VideoKey} />
-            <Label htmlFor="s3VideoKey">Subir Video (Opcional)</Label>
-            <Input
-              id="s3VideoKey"
-              type="file" // CLAVE: El tipo debe ser 'file'
-              accept="video/*"
-              onChange={handleVideoFileChange} // Usa el manejador correcto
-              disabled={loading}
-            />
-            <p className="text-sm text-muted-foreground">
-              Selecciona un archivo de video para subir. Solo se enviará un nuevo video si lo seleccionas.
-            </p>
-            
-            {/* 🚨 CAMBIO AQUÍ: Usar formData.videoFile para verificar si hay un nuevo archivo */}
-            {proyecto?.s3VideoKey && !formData.videoFile && (
-              <p className="text-sm text-blue-500">
-                Video actual: {proyecto.s3VideoKey} (Si no subes uno nuevo, se mantendrá este.)
-              </p>
-            )}
-          </div>
-
-
-          <div className="flex items-center space-x-2 pt-2">
-            <Input
-              id="disponibleProyecto"
-              type="checkbox"
-              checked={formData.disponibleProyecto}
-              onChange={handleDisponibleChange}
-              disabled={loading}
-              className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <Label htmlFor="disponibleProyecto">
-              Proyecto Disponible 
-            </Label>
-          </div>
-
-
-          <div className="space-y-2">
             <Label htmlFor="url">Enlace del Proyecto</Label>
             <Input
               id="url"
@@ -167,6 +141,72 @@ const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               disabled={loading}
               placeholder="https://proyecto.com"
             />
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Input
+              id="disponibleProyecto"
+              type="checkbox"
+              checked={formData.disponibleProyecto}
+              onChange={handleDisponibleChange}
+              disabled={loading}
+              className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500"
+            />
+            <Label htmlFor="disponibleProyecto">Proyecto Disponible</Label>
+          </div>
+
+          {/* Video actual (si existe en modo edición) */}
+          {proyecto?.s3VideoKey && (
+            <div className="space-y-2">
+              <Label>Video actual</Label>
+              <VideoDisplay s3VideoKey={proyecto.s3VideoKey} />
+              <p className="text-sm text-muted-foreground">
+                Si subes un nuevo video, este reemplazará al actual automáticamente.
+              </p>
+            </div>
+          )}
+
+          {/* Subir nuevo video */}
+          <div className="space-y-2">
+            <Label htmlFor="videoFile">
+              {proyecto ? "Cambiar video (opcional)" : "Subir video (opcional)"}
+            </Label>
+
+            {!videoFile ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  id="videoFile"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoFileChange}
+                  disabled={loading}
+                  className="flex-1"
+                />
+                <Upload className="h-5 w-5 text-muted-foreground" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{videoFile.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(videoFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRemoveVideo}
+                  disabled={loading}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <p className="text-sm text-muted-foreground">
+              Formatos soportados: MP4, WebM, AVI. Máximo recomendado: 100MB
+            </p>
           </div>
 
           <div className="flex gap-3 pt-4">

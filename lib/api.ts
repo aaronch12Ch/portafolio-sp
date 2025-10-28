@@ -1,6 +1,5 @@
 import { getToken } from "./auth"
-import { File } from 'buffer';
-import axios from 'axios';
+
 const API_BASE_URL = "https://portafolio-1-q45o.onrender.com/api"
 
 export interface Proyecto {
@@ -10,9 +9,7 @@ export interface Proyecto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  videoFile?: File | null;
   s3VideoKey?: string | null 
-
 }
 
 export interface CreateProyectoDto {
@@ -21,12 +18,6 @@ export interface CreateProyectoDto {
   urlImagen: string
   url: string
   disponibleProyecto?: boolean
-  videoFile?: File | null; 
-  
-  // Opcional: Puedes mantener s3VideoKey solo para la ruta de retorno, 
-  // pero NO la envías como dato de entrada del formulario.
-  s3VideoKey?: string | null; 
-
 }
 
 // Proyectos públicos
@@ -71,106 +62,83 @@ export async function getProyectosAdmin(): Promise<Proyecto[]> {
   return response.json()
 }
 
-// export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
-//   const token = getToken()
-//   const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify(proyecto),
-//   })
+// Crear proyecto (sin video)
+export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
+  const token = getToken()
+  const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(proyecto),
+  })
 
-//   if (!response.ok) {
-//     throw new Error("Error al crear proyecto")
-//   }
+  if (!response.ok) {
+    throw new Error("Error al crear proyecto")
+  }
 
-//   return response.json()
-// }
-// Importa el DTO modificado
+  return response.json()
+}
 
-// export async function createProyecto(proyecto: CreateProyectoDto): Promise<Proyecto> {
-//     const token = getToken();
+// Actualizar proyecto (sin video)
+export async function updateProyecto(idProyecto: number, proyecto: CreateProyectoDto): Promise<Proyecto> {
+  const token = getToken()
+  const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(proyecto),
+  })
 
-//     const formData = new FormData();
-//     const { videoFile, s3VideoKey, ...proyectoData } = proyecto;
+  if (!response.ok) {
+    throw new Error("Error al actualizar proyecto")
+  }
 
-//     // Crear el Blob para la parte 'proyecto' (crucial para Spring Boot)
-//     const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-//         type: 'application/json' 
-//     });
-    
-//     formData.append("proyecto", jsonBlob); 
-    
-//     // Adjuntar la parte 'video'
-//     if (videoFile) {
-//         formData.append("video", videoFile, videoFile.name);
-//     } 
+  return response.json()
+}
 
-//     try {
-//         // 🚨 CAMBIO CLAVE: Usar axios.post
-//         const response = await axios.post<Proyecto>(
-//             `${API_BASE_URL}/proyectos/admin`, 
-//             formData, // Axios pasa el FormData como cuerpo
-//             {
-//                 headers: {
-//                     // Solo incluimos el header de autorización.
-//                     // Axios se encarga de Content-Type: multipart/form-data
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//                 // La configuración de timeout puede ayudar si es un problema de red
-//                 // timeout: 30000, 
-//             }
-//         );
-//         // Axios devuelve los datos en la propiedad 'data'
-//         return response.data;
-//     } catch (error: any) {
-//         // Manejo de errores de Axios
-//         const status = error.response?.status || 'N/A';
-//         const message = error.response?.data?.message || error.message;
-//         throw new Error(`Error ${status} al crear proyecto: ${message}`);
-//     }
-// }
+// Subir video a un proyecto existente
+export async function uploadVideoToProyecto(idProyecto: number, videoFile: File): Promise<Proyecto> {
+  const token = getToken()
+  const formData = new FormData()
+  formData.append("video", videoFile)
 
-// export async function updateProyecto(idProyecto: number, proyecto: CreateProyectoDto): Promise<Proyecto> {
-//     const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}/video`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  })
 
-//     const formData = new FormData();
-//     const { videoFile, s3VideoKey, ...proyectoData } = proyecto; 
+  if (!response.ok) {
+    throw new Error("Error al subir video")
+  }
 
-//     // Crear el Blob para la parte 'proyecto'
-//     const jsonBlob = new Blob([JSON.stringify(proyectoData)], { 
-//         type: 'application/json' 
-//     });
+  return response.json()
+}
 
-//     formData.append("proyecto", jsonBlob); 
-    
-//     // Adjuntar la parte 'video'
-//     if (videoFile) {
-//         formData.append("video", videoFile, videoFile.name);
-//     }
-    
-//     try {
-//         // 🚨 CAMBIO CLAVE: Usar axios.put
-//         const response = await axios.put<Proyecto>(
-//             `${API_BASE_URL}/proyectos/admin/${idProyecto}`, 
-//             formData, 
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//                 // timeout: 30000, 
-//             }
-//         );
-//         return response.data;
-//     } catch (error: any) {
-//         const status = error.response?.status || 'N/A';
-//         const message = error.response?.data?.message || error.message;
-//         throw new Error(`Error ${status} al actualizar proyecto: ${message}`);
-//     }
-// }
+// Eliminar video de un proyecto
+export async function deleteVideoFromProyecto(idProyecto: number): Promise<Proyecto> {
+  const token = getToken()
+  const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}/video`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 
+  if (!response.ok) {
+    throw new Error("Error al eliminar video")
+  }
+
+  return response.json()
+}
+
+// Eliminar proyecto
 export async function deleteProyecto(idProyecto: number): Promise<void> {
   const token = getToken()
   const response = await fetch(`${API_BASE_URL}/proyectos/admin/${idProyecto}`, {
