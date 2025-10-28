@@ -37,14 +37,16 @@ interface ProyectoData {
   descripcionProyecto: string
   urlImagen: string
   url: string
-  disponibleProyecto?: boolean
+  disponibleProyecto: boolean  // Asegurarse que sea boolean, no opcional
 }
 
 // Crear proyecto (sin video)
 export async function createProyectoAction(token: string, proyectoData: ProyectoData): Promise<Proyecto> {
   try {
     console.log("[Server] 🛠️ Creando Proyecto (sin video)")
-    console.log("[Server] 🕵️ Datos del proyecto:", proyectoData)
+    console.log("[Server] 🕵️ Datos del proyecto:", JSON.stringify(proyectoData, null, 2))
+    console.log(`[Server] 🕵️ URL completa:`, `${API_BASE_URL}/proyectos/admin`)
+    console.log(`[Server] 🕵️ Token:`, token.substring(0, 30) + "...")
 
     const response = await fetch(`${API_BASE_URL}/proyectos/admin`, {
       method: "POST",
@@ -55,19 +57,24 @@ export async function createProyectoAction(token: string, proyectoData: Proyecto
       body: JSON.stringify(proyectoData),
     })
 
+    console.log(`[Server] 📡 Response status:`, response.status)
+    console.log(`[Server] 📡 Response headers:`, Object.fromEntries(response.headers.entries()))
+
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`[Server] ❌ Error al crear proyecto: ${response.status} - ${errorText}`)
-      throw new Error(`Error al crear proyecto: ${response.status}`)
+      console.error(`[Server] ❌ Error al crear proyecto: ${response.status}`)
+      console.error(`[Server] ❌ Error body:`, errorText)
+      throw new Error(`Error al crear proyecto: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
     console.log("[Server] ✅ Proyecto creado con ID:", data.idProyecto)
+    console.log("[Server] ✅ Respuesta completa:", data)
     
     revalidatePath("/admin")
     return data
   } catch (error) {
-    console.error("[Server] Error creating proyecto:", error)
+    console.error("[Server] ❌❌❌ Error creating proyecto:", error)
     throw error
   }
 }
@@ -80,7 +87,9 @@ export async function updateProyectoAction(
 ): Promise<Proyecto> {
   try {
     console.log(`[Server] 🛠️ Actualizando Proyecto ID: ${id}`)
-    console.log(`[Server] 🕵️ Datos del proyecto:`, proyectoData)
+    console.log(`[Server] 🕵️ Datos del proyecto:`, JSON.stringify(proyectoData, null, 2))
+    console.log(`[Server] 🕵️ URL completa:`, `${API_BASE_URL}/proyectos/admin/${id}`)
+    console.log(`[Server] 🕵️ Token:`, token.substring(0, 30) + "...")
 
     const response = await fetch(`${API_BASE_URL}/proyectos/admin/${id}`, {
       method: "PUT",
@@ -91,19 +100,24 @@ export async function updateProyectoAction(
       body: JSON.stringify(proyectoData),
     })
 
+    console.log(`[Server] 📡 Response status:`, response.status)
+    console.log(`[Server] 📡 Response headers:`, Object.fromEntries(response.headers.entries()))
+
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`[Server] ❌ Error al actualizar: ${response.status} - ${errorText}`)
-      throw new Error(`Error al actualizar proyecto: ${response.status}`)
+      console.error(`[Server] ❌ Error al actualizar: ${response.status}`)
+      console.error(`[Server] ❌ Error body:`, errorText)
+      throw new Error(`Error al actualizar proyecto: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
-    console.log(`[Server] ✅ Proyecto ID: ${id} actualizado`)
+    console.log(`[Server] ✅ Proyecto ID: ${id} actualizado exitosamente`)
+    console.log(`[Server] ✅ Respuesta:`, data)
     
     revalidatePath("/admin")
     return data
   } catch (error) {
-    console.error("[Server] Error updating proyecto:", error)
+    console.error("[Server] ❌❌❌ Error updating proyecto:", error)
     throw error
   }
 }

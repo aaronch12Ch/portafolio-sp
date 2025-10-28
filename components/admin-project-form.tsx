@@ -25,7 +25,7 @@ export function AdminProjectForm({ proyecto, onSubmit, onCancel }: AdminProjectF
     descripcionProyecto: proyecto?.descripcionProyecto || "",
     urlImagen: proyecto?.urlImagen || "",
     url: proyecto?.url || "",
-    disponibleProyecto: proyecto?.disponibleProyecto ?? true,
+    disponibleProyecto: proyecto?.disponibleProyecto !== undefined ? proyecto.disponibleProyecto : true,
   })
   const [imageUrlError, setImageUrlError] = useState("")
 

@@ -75,6 +75,9 @@ export default function AdminPage() {
       const { videoFile, ...proyectoData } = data
 
       console.log("[Admin] 🚀 Iniciando creación de proyecto...")
+      console.log("[Admin] 📦 Datos completos recibidos del form:", data)
+      console.log("[Admin] 📦 Video file:", videoFile?.name || "ninguno")
+      console.log("[Admin] 📦 Datos del proyecto (JSON):", proyectoData)
 
       // 1. Crear el proyecto primero (sin video)
       const nuevoProyecto = await createProyectoAction(token, proyectoData)
@@ -95,7 +98,8 @@ export default function AdminPage() {
       setShowForm(false)
       loadProyectos()
     } catch (error) {
-      console.error("[Admin] handleCreate error:", error)
+      console.error("[Admin] ❌❌❌ handleCreate error:", error)
+      console.error("[Admin] ❌ Stack trace:", error instanceof Error ? error.stack : "No stack")
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "No se pudo crear el proyecto",
@@ -117,6 +121,9 @@ export default function AdminPage() {
       const { videoFile, ...proyectoData } = data
 
       console.log("[Admin] 🚀 Iniciando actualización del proyecto ID:", editingProyecto.idProyecto)
+      console.log("[Admin] 📦 Datos completos recibidos del form:", data)
+      console.log("[Admin] 📦 Video file:", videoFile?.name || "ninguno")
+      console.log("[Admin] 📦 Datos del proyecto (JSON):", proyectoData)
 
       // 1. Actualizar el proyecto primero (sin video)
       await updateProyectoAction(token, editingProyecto.idProyecto, proyectoData)
@@ -137,7 +144,8 @@ export default function AdminPage() {
       setEditingProyecto(null)
       loadProyectos()
     } catch (error) {
-      console.error("[Admin] handleUpdate error:", error)
+      console.error("[Admin] ❌❌❌ handleUpdate error:", error)
+      console.error("[Admin] ❌ Stack trace:", error instanceof Error ? error.stack : "No stack")
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "No se pudo actualizar el proyecto",

@@ -17,7 +17,7 @@ export interface CreateProyectoDto {
   descripcionProyecto: string
   urlImagen: string
   url: string
-  disponibleProyecto?: boolean
+  disponibleProyecto: boolean  // Debe ser boolean, no opcional
 }
 
 // Proyectos públicos
