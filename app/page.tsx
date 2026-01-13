@@ -143,7 +143,7 @@ export default async function HomePage() {
           <div className="max-w-3xl mb-16">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">Mis Proyectos</h2>
             <p className="text-xl text-primary-foreground/90 leading-relaxed">
-              He trabajado en diversos proyectos que demuestran mi capacidad para crear soluciones digitales completas,
+              E trabajado en diversos proyectos que demuestran mi capacidad para crear soluciones digitales completas,
               desde el diseño hasta la implementación.
             </p>
           </div>
