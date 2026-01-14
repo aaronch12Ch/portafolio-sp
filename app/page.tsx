@@ -156,7 +156,6 @@ export default async function HomePage() {
           )}
 
           {proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}
-          
         </div>
       </section>
 
