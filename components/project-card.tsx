@@ -11,6 +11,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ proyecto }: ProjectCardProps) {
+  const [isHovered, setIsHovered] = React.useState(false)
   const videoKey = proyecto.s3VideoKey ?? null;
   const hasVideo = !!videoKey && videoKey.length > 0;
   const videoUrl = hasVideo ? `https://portafoliovideo.s3.us-east-1.amazonaws.com/${videoKey}` : null;
@@ -26,8 +27,12 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
   }, [proyecto.nombreProyecto, hasVideo, videoUrl]);
 
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-      <div className="relative aspect-video overflow-hidden bg-muted">
+    <Card 
+      className="overflow-hidden group hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative aspect-video overflow-hidden bg-muted flex-shrink-0">
         <Image
           src={proyecto.urlImagen || "/placeholder.svg?height=400&width=600"}
           alt={proyecto.nombreProyecto}
@@ -35,23 +40,19 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
           className="object-contain group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-      <CardHeader>
+      <CardHeader className="flex-grow">
         <CardTitle className="text-balance">{proyecto.nombreProyecto}</CardTitle>
-        <CardDescription 
-          className={`text-pretty transition-all duration-300 ${
+        <div 
+          className={`text-pretty text-sm text-muted-foreground transition-all duration-300 scrollbar-thin ${
             isHovered 
-              ? 'max-h-48 overflow-y-auto' 
-              : 'line-clamp-2 max-h-12 overflow-hidden'
+              ? 'max-h-48 overflow-y-auto pr-2' 
+              : 'line-clamp-2 overflow-hidden'
           }`}
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'hsl(var(--primary)) transparent'
-          }}
         >
           {proyecto.descripcionProyecto}
-        </CardDescription>
+        </div>
       </CardHeader>
-      <CardFooter className="flex flex-col gap-2 w-full">
+      <CardFooter className="flex flex-col gap-2 w-full flex-shrink-0">
         <Button asChild variant="outline" className="w-full bg-transparent">
           <a 
             href={proyecto.url} 
