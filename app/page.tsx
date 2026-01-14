@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
+import { ProjectCarousel } from "@/components/projectCarousel"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
@@ -154,13 +155,8 @@ export default async function HomePage() {
             </div>
           )}
 
-          {proyectos.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {proyectos.map((proyecto, i) => (
-                <ProjectCard key={proyecto.idProyecto || i} proyecto={proyecto} />
-              ))}
-            </div>
-          )}
+          {proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}
+          
         </div>
       </section>
 
