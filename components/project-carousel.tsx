@@ -41,7 +41,7 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
 
         setTimeout(() => setIsAnimating(false), 600)
       }
-    }, 2000) // Cambia cada 2 segundos
+    }, 5000) // Cambia cada 2 segundos
 
     return () => clearInterval(interval)
   }, [isAnimating, proyectos.length])
