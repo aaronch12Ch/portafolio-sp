@@ -59,15 +59,15 @@ export default async function HomePage() {
                 DBA.
               </h1>
               <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
-                Ingeniero en Sistemas Computacionales
+                Ingeniero en Sistemas Computacionales.
                 <br />
-                Construyo productos digitales escalables con experiencias de usuario excepcionales
+                Construyo productos digitales escalables con experiencias de usuario excepcionales.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-6 text-sm">
                 <div>
                   <p className="font-semibold mb-1">Altamente capacitado en</p>
-                  <p className="text-primary-foreground/80">.Net Framework, SQL server y Spring Boot</p>
+                  <p className="text-primary-foreground/80">.Net Framework, SQL server y Spring Boot.</p>
                 </div>
                 <div>
                   <p className="font-semibold mb-1">Desarrollo base de datos y backend</p>
