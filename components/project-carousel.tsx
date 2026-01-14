@@ -46,8 +46,10 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
     return () => clearInterval(interval)
   }, [isAnimating, proyectos.length])
 
-  // Si hay 3 o menos proyectos, mostramos el grid normal
-  if (proyectos.length <= 3) {
+  // Si hay 3 o menos proyectos en desktop Y solo 1 en móvil, mostramos el grid normal
+  const shouldShowCarousel = isMobile ? proyectos.length > 1 : proyectos.length > 3
+  
+  if (!shouldShowCarousel) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {proyectos.map((proyecto, i) => (
