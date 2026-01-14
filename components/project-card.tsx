@@ -37,7 +37,19 @@ export function ProjectCard({ proyecto }: ProjectCardProps) {
       </div>
       <CardHeader>
         <CardTitle className="text-balance">{proyecto.nombreProyecto}</CardTitle>
-        <CardDescription className="text-pretty line-clamp-2">{proyecto.descripcionProyecto}</CardDescription>
+        <CardDescription 
+          className={`text-pretty transition-all duration-300 ${
+            isHovered 
+              ? 'max-h-48 overflow-y-auto' 
+              : 'line-clamp-2 max-h-12 overflow-hidden'
+          }`}
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'hsl(var(--primary)) transparent'
+          }}
+        >
+          {proyecto.descripcionProyecto}
+        </CardDescription>
       </CardHeader>
       <CardFooter className="flex flex-col gap-2 w-full">
         <Button asChild variant="outline" className="w-full bg-transparent">
