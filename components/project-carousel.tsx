@@ -28,11 +28,23 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   // Auto-play del carrusel
   useEffect(() => {
     const interval = setInterval(() => {
-      nextSlide()
-    }, 5000) // Cambia cada 5 segundos
+      if (!isAnimating) {
+        setIsAnimating(true)
+        setDirection('next')
+        
+        setCurrentIndex((prev) => {
+          const itemsPerPage = window.innerWidth < 1024 ? 1 : 3
+          const maxIndex = proyectos.length - itemsPerPage
+          if (prev >= maxIndex) return 0
+          return prev + itemsPerPage
+        })
+
+        setTimeout(() => setIsAnimating(false), 600)
+      }
+    }, 2000) // Cambia cada 2 segundos
 
     return () => clearInterval(interval)
-  }, [currentIndex, isMobile])
+  }, [isAnimating, proyectos.length])
 
   // Si hay 3 o menos proyectos, mostramos el grid normal
   if (proyectos.length <= 3) {
