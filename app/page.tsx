@@ -60,6 +60,7 @@ export default async function HomePage() {
               </h1>
               <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
                 Ingeniero en Sistemas Computacionales
+                <br />
                 Construyo productos digitales escalables con experiencias de usuario excepcionales
               </p>
 
