@@ -14,8 +14,10 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024)
     }
@@ -47,6 +49,17 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   }, [isAnimating, proyectos.length])
 
   // Si hay 3 o menos proyectos en desktop Y solo 1 en móvil, mostramos el grid normal
+  // Esperamos a que el componente esté montado para evitar errores de hidratación
+  if (!mounted) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {proyectos.map((proyecto, i) => (
+          <ProjectCard key={proyecto.idProyecto || i} proyecto={proyecto} />
+        ))}
+      </div>
+    )
+  }
+
   const shouldShowCarousel = isMobile ? proyectos.length > 1 : proyectos.length > 3
   
   if (!shouldShowCarousel) {
