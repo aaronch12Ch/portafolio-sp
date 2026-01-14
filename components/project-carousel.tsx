@@ -2,7 +2,7 @@
 import { ProjectCard } from "@/components/project-card"
 import type { Proyecto } from "@/lib/api"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 
 interface ProjectCarouselProps {
@@ -11,6 +11,17 @@ interface ProjectCarouselProps {
 
 export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Si hay 3 o menos proyectos, mostramos el grid normal
   if (proyectos.length <= 3) {
@@ -23,28 +34,25 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
     )
   }
 
+  const itemsPerPage = isMobile ? 1 : 3
+  const maxIndex = proyectos.length - itemsPerPage
+
   // Funciones de navegación
   const nextSlide = () => {
     setCurrentIndex((prev) => {
-      // En móvil avanza de 1 en 1
-      if (window.innerWidth < 1024) {
-        return prev >= proyectos.length - 1 ? 0 : prev + 1
-      }
-      // En desktop avanza de 3 en 3
-      return prev >= proyectos.length - 3 ? 0 : prev + 3
+      if (prev >= maxIndex) return 0
+      return prev + itemsPerPage
     })
   }
 
   const prevSlide = () => {
     setCurrentIndex((prev) => {
-      // En móvil retrocede de 1 en 1
-      if (window.innerWidth < 1024) {
-        return prev <= 0 ? proyectos.length - 1 : prev - 1
-      }
-      // En desktop retrocede de 3 en 3
-      return prev <= 0 ? Math.max(0, proyectos.length - 3) : prev - 3
+      if (prev <= 0) return maxIndex
+      return Math.max(0, prev - itemsPerPage)
     })
   }
+
+  const totalDots = isMobile ? proyectos.length : Math.ceil(proyectos.length / 3)
 
   return (
     <div className="relative">
@@ -73,7 +81,7 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
         <div
           className="flex transition-transform duration-500 ease-in-out gap-6"
           style={{
-            transform: `translateX(-${currentIndex * (100 / proyectos.length)}%)`,
+            transform: `translateX(-${(currentIndex / proyectos.length) * 100}%)`,
           }}
         >
           {proyectos.map((proyecto, i) => (
@@ -89,22 +97,16 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
 
       {/* Indicadores de puntos */}
       <div className="flex justify-center gap-2 mt-8">
-        {proyectos.map((_, i) => {
-          // En desktop, mostramos indicadores cada 3 proyectos
-          const isDesktopIndicator = window.innerWidth >= 1024 && i % 3 === 0
-          const isMobileIndicator = window.innerWidth < 1024
-
-          if (!isDesktopIndicator && !isMobileIndicator) return null
-
-          const isActive =
-            window.innerWidth >= 1024
-              ? Math.floor(currentIndex / 3) === Math.floor(i / 3)
-              : currentIndex === i
+        {Array.from({ length: totalDots }).map((_, i) => {
+          const dotIndex = isMobile ? i : i * 3
+          const isActive = isMobile
+            ? currentIndex === i
+            : Math.floor(currentIndex / 3) === i
 
           return (
             <button
               key={i}
-              onClick={() => setCurrentIndex(i)}
+              onClick={() => setCurrentIndex(dotIndex)}
               className={`h-2 rounded-full transition-all ${
                 isActive
                   ? "w-8 bg-primary-foreground"

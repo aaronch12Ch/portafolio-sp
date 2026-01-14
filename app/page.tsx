@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
-import { ProjectCarousel } from "@/components/projectCarousel"
+import { ProjectCarousel } from "@/components/project-carousel"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
