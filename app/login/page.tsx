@@ -11,13 +11,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast"
 import { loginAction } from "@/lib/server-actions"
 import { saveAuth } from "@/lib/auth"
-import { Loader2, ArrowLeft } from "lucide-react"
+import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 
 export default function LoginPage() {
   const [correoUsuario, setCorreoUsuario] = useState("")
   const [contrasena, setContrasena] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
@@ -100,15 +101,35 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contrasena">Contraseña</Label>
-                <Input
-                  id="contrasena"
-                  type="password"
-                  placeholder="Ingresa tu contraseña"
-                  value={contrasena}
-                  onChange={(e) => setContrasena(e.target.value)}
-                  required
-                  disabled={loading}
-                />
+                <div className="relative">
+                  <Input
+                    id="contrasena"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Ingresa tu contraseña"
+                    value={contrasena}
+                    onChange={(e) => setContrasena(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={loading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    <span className="sr-only">
+                      {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    </span>
+                  </Button>
+                </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
