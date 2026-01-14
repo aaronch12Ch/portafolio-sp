@@ -79,15 +79,17 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
       {/* Carrusel */}
       <div className="overflow-hidden">
         <div
-          className="flex transition-transform duration-500 ease-in-out gap-6"
+          className="flex transition-transform duration-500 ease-in-out"
           style={{
-            transform: `translateX(-${(currentIndex / proyectos.length) * 100}%)`,
+            transform: isMobile 
+              ? `translateX(-${currentIndex * 100}%)`
+              : `translateX(-${currentIndex * (100 / 3)}%)`,
           }}
         >
           {proyectos.map((proyecto, i) => (
             <div
               key={proyecto.idProyecto || i}
-              className="flex-none w-full lg:w-[calc(33.333%-16px)]"
+              className="flex-none w-full lg:w-1/3 px-3"
             >
               <ProjectCard proyecto={proyecto} />
             </div>
