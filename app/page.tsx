@@ -59,6 +59,7 @@ export default async function HomePage() {
                 DBA.
               </h1>
               <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
+                Ingeniero en Sistemas Computacionales
                 Construyo productos digitales escalables con experiencias de usuario excepcionales
               </p>
 
@@ -69,7 +70,7 @@ export default async function HomePage() {
                 </div>
                 <div>
                   <p className="font-semibold mb-1">Desarrollo base de datos y backend</p>
-                  <p className="text-primary-foreground/80">con arquitecturas modernas y escalables</p>
+                  <p className="text-primary-foreground/80">Con arquitecturas modernas y escalables</p>
                 </div>
               </div>
             </div>
