@@ -46,7 +46,7 @@ export default async function HomePage() {
             <div className="absolute top-20 right-10 w-20 h-20 border-2 border-primary-foreground/20 rounded-lg rotate-12 animate-float" />
             
             {/* Grid de puntos con rebote */}
-            <div className="absolute bottom-[200px] left-10 w-16 h-16 animate-bounce-slow">
+            <div className="absolute bottom-[100px] left-10 w-16 h-16 animate-bounce-slow">
               <div className="grid grid-cols-3 gap-1">
                 {[...Array(9)].map((_, i) => (
                   <div 
