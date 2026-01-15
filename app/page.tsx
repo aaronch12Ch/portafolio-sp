@@ -84,22 +84,30 @@ export default async function HomePage() {
           </div>
 
           {/* Lado derecho - Verde lima con foto */}
-          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex items-center justify-center relative">
-            {/* Elementos decorativos */}
-            <div className="absolute top-16 right-16 w-24 h-1 bg-accent-foreground/20" />
-            <div className="absolute top-20 right-16">
+          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
+          {/* Línea horizontal que se mueve */}
+            <div className="absolute top-16 right-16 w-24 h-1 bg-accent-foreground/20 animate-slide-right" />
+            
+            {/* Puntos verticales que bajan */}
+            <div className="absolute top-20 right-16 animate-slide-down">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-1 h-1 bg-accent-foreground/30 rounded-full mb-2" />
+                <div 
+                  key={i} 
+                  className="w-1 h-1 bg-accent-foreground/30 rounded-full mb-2 animate-pulse"
+                  style={{ animationDelay: `${i * 0.2}s` }}
+                />
               ))}
             </div>
-            <div className="absolute bottom-32 right-20 w-12 h-12 border-2 border-accent-foreground/20" />
+            
+            {/* Cuadrado que rota */}
+            <div className="absolute bottom-32 right-20 w-12 h-12 border-2 border-accent-foreground/20 animate-rotate-pulse" />
 
             <div className="relative">
               <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 relative">
                 <img
                   src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
                   alt="Profile"
-                  className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                  className="w-full h-full object-cover rounded-2xl shadow-2xl animate-zoom"
                 />
               </div>
             </div>

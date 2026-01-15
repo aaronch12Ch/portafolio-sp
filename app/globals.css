@@ -199,3 +199,57 @@
     animation: bounce-slow 4s ease-in-out infinite;
   }
 }
+
+
+
+@keyframes slide-right {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes slide-down {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes rotate-pulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(45deg) scale(1.1);
+  }
+}
+
+@keyframes zoom-in-out {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-right 3s ease-in-out infinite;
+}
+
+.animate-slide-down {
+  animation: slide-down 2s ease-in-out infinite;
+}
+
+.animate-rotate-pulse {
+  animation: rotate-pulse 4s ease-in-out infinite;
+}
+
+.animate-zoom {
+  animation: zoom-in-out 5s ease-in-out infinite;
+}
