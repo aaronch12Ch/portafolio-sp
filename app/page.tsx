@@ -85,33 +85,56 @@ export default async function HomePage() {
 
           {/* Lado derecho - Verde lima con foto */}
           <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
-          {/* Línea horizontal que se mueve */}
-            <div className="absolute top-16 right-16 w-24 h-1 bg-accent-foreground/20 animate-slide-right" />
-            
-            {/* Puntos verticales que bajan */}
-            <div className="absolute top-20 right-16 animate-slide-down">
-              {[...Array(5)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className="w-1 h-1 bg-accent-foreground/30 rounded-full mb-2 animate-pulse"
-                  style={{ animationDelay: `${i * 0.2}s` }}
-                />
-              ))}
-            </div>
-            
-            {/* Cuadrado que rota */}
-            <div className="absolute bottom-32 right-20 w-12 h-12 border-2 border-accent-foreground/20 animate-rotate-pulse" />
+  {/* Línea horizontal que se mueve */}
+          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
+          {/* Blob líquido con morphing extremo */}
+          <div className="absolute top-16 right-16 w-32 h-32 bg-gradient-to-br from-accent-foreground/20 to-accent-foreground/5 animate-liquid-morph blur-2xl" />
+          
+          {/* Línea con efecto shimmer neón */}
+          <div className="absolute top-20 right-16 w-24 h-0.5 bg-accent-foreground/30 animate-shimmer" />
+          
+          {/* Puntos con efecto glitch */}
+          <div className="absolute top-24 right-16 animate-glitch">
+            {[...Array(5)].map((_, i) => (
+              <div 
+                key={i} 
+                className="w-1.5 h-1.5 bg-accent-foreground/40 rounded-full mb-2 animate-neon-pulse"
+                style={{ animationDelay: `${i * 0.15}s` }}
+              />
+            ))}
+          </div>
+          
+          {/* Cuadrado con efecto magnético 3D */}
+          <div className="absolute bottom-32 right-20 w-14 h-14 border-2 border-accent-foreground/30 animate-magnetic-pull backdrop-blur-sm bg-accent-foreground/5" 
+              style={{ 
+                boxShadow: '0 0 20px rgba(var(--accent-foreground), 0.3)',
+                transformStyle: 'preserve-3d'
+              }} 
+          />
+          
+          {/* Elemento flotante en 3D con parallax */}
+          <div className="absolute top-1/3 left-16 w-16 h-16 bg-gradient-to-br from-accent-foreground/10 to-transparent rounded-full animate-parallax-float blur-md" />
 
-            <div className="relative">
-              <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 relative">
-                <img
-                  src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-2xl shadow-2xl animate-zoom"
-                />
-              </div>
+          <div className="relative">
+            {/* Múltiples capas de glow con colores */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-accent-foreground/30 via-accent-foreground/10 to-accent-foreground/30 rounded-2xl blur-3xl animate-pulse" />
+            <div className="absolute -inset-2 bg-accent-foreground/20 rounded-2xl blur-2xl animate-neon-pulse" />
+            
+            <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 relative group animate-float-3d">
+              <img
+                src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
+                alt="Profile"
+                className="w-full h-full object-cover rounded-2xl shadow-2xl relative z-10 transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                style={{
+                  boxShadow: '0 20px 60px -10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(var(--accent-foreground), 0.2)'
+                }}
+              />
+              
+              {/* Overlay con efecto holográfico al hover */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-accent-foreground/0 via-accent-foreground/10 to-accent-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
             </div>
           </div>
+        </div>
         </div>
       </section>
 
