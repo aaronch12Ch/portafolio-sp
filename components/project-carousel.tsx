@@ -182,7 +182,7 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
       </div>
 
       {/* Indicador de progreso */}
-      <div className="mt-4 h-1 bg-primary-foreground/20 rounded-full overflow-hidden">
+      <div className="mt-2 h-1 bg-primary-foreground/20 rounded-full overflow-hidden">
         <div 
           className="h-full bg-primary-foreground rounded-full transition-all duration-5000 ease-linear"
           style={{
