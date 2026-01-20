@@ -2,7 +2,7 @@
 import { ProjectCard } from "@/components/project-card"
 import type { Proyecto } from "@/lib/api"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 
 interface ProjectCarouselProps {
@@ -14,6 +14,12 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  
+  // Estados para touch/swipe
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -28,7 +34,7 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   // Auto-play del carrusel
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isAnimating) {
+      if (!isAnimating && !isDragging) {
         setIsAnimating(true)
         setDirection('next')
         
@@ -41,10 +47,10 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
 
         setTimeout(() => setIsAnimating(false), 600)
       }
-    }, 5000) // Cambia cada 2 segundos
+    }, 5000)
 
     return () => clearInterval(interval)
-  }, [isAnimating, proyectos.length])
+  }, [isAnimating, isDragging, proyectos.length])
 
   // Si hay 3 o menos proyectos, mostramos el grid normal
   if (proyectos.length <= 3) {
@@ -95,6 +101,76 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
     setTimeout(() => setIsAnimating(false), 600)
   }
 
+  // Funciones para manejar touch/swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+    setIsDragging(true)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      nextSlide()
+    }
+    
+    if (isRightSwipe) {
+      prevSlide()
+    }
+
+    setTouchStart(0)
+    setTouchEnd(0)
+    setIsDragging(false)
+  }
+
+  // Funciones para mouse drag en desktop
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setTouchStart(e.clientX)
+    setIsDragging(true)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return
+    setTouchEnd(e.clientX)
+  }
+
+  const handleMouseUp = () => {
+    if (!touchStart || !touchEnd) {
+      setIsDragging(false)
+      return
+    }
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      nextSlide()
+    }
+    
+    if (isRightSwipe) {
+      prevSlide()
+    }
+
+    setTouchStart(0)
+    setTouchEnd(0)
+    setIsDragging(false)
+  }
+
+  const handleMouseLeave = () => {
+    setIsDragging(false)
+    setTouchStart(0)
+    setTouchEnd(0)
+  }
+
   const totalDots = isMobile ? proyectos.length : Math.ceil(proyectos.length / 3)
 
   return (
@@ -122,10 +198,20 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
       </div>
 
       {/* Carrusel */}
-      <div className="overflow-hidden rounded-lg">
+      <div 
+        ref={carouselRef}
+        className="overflow-hidden rounded-lg"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      >
         <div
-          className={`flex transition-all duration-700 ease-in-out ${
-            isAnimating ? 'cursor-grabbing' : 'cursor-grab'
+          className={`flex transition-all duration-700 ease-in-out select-none ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
           style={{
             transform: isMobile 
