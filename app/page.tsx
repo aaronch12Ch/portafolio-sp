@@ -88,11 +88,11 @@ export default async function HomePage() {
             {/* Blob líquido con morphing extremo */}
             <div className="absolute top-16 right-16 w-32 h-32 bg-gradient-to-br from-accent-foreground/20 to-accent-foreground/5 animate-liquid-morph blur-2xl" />
             
-            {/* Línea con efecto shimmer neón */}
-            <div className="absolute top-20 right-16 w-24 h-0.5 bg-accent-foreground/30 animate-shimmer" />
-            
+           {/* Línea con efecto shimmer neón */}
+            <div className="absolute top-20 right-4 sm:right-16 w-16 sm:w-24 h-0.5 bg-accent-foreground/30 animate-shimmer" />
+
             {/* Puntos con efecto glitch */}
-            <div className="absolute top-24 right-16 animate-glitch">
+            <div className="absolute top-24 right-4 sm:right-16 animate-glitch">
               {[...Array(5)].map((_, i) => (
                 <div 
                   key={i} 
@@ -101,9 +101,9 @@ export default async function HomePage() {
                 />
               ))}
             </div>
-            
+
             {/* Cuadrado con efecto magnético 3D */}
-            <div className="absolute bottom-32 right-20 w-14 h-14 border-2 border-accent-foreground/30 animate-magnetic-pull backdrop-blur-sm bg-accent-foreground/5" 
+            <div className="absolute bottom-32 right-4 sm:right-20 w-8 h-8 sm:w-14 sm:h-14 border-2 border-accent-foreground/30 animate-magnetic-pull backdrop-blur-sm bg-accent-foreground/5" 
                 style={{ 
                   boxShadow: '0 0 20px rgba(var(--accent-foreground), 0.3)',
                   transformStyle: 'preserve-3d'
