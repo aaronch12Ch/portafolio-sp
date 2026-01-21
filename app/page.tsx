@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar"
 import { ProjectCard } from "@/components/project-card"
 import { AutoLogout } from "@/components/auto-logout"
 import { ProjectCarousel } from "@/components/project-carousel"
+import { WelcomeScreen } from "@/components/welcome-screen"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
@@ -35,6 +36,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomeScreen />
       <AutoLogout />
       <Navbar />
 
