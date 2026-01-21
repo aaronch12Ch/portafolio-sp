@@ -61,7 +61,7 @@ export default async function HomePage() {
             </div>
 
             <div className="relative z-10 max-w-xl">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 Backen y
                 <br />
                 DBA.
