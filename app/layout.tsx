@@ -1,13 +1,10 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/toaster"
 import { Suspense } from "react"
 import "./globals.css"
 
-//////------------------------------
 import { Inter, Poppins, Outfit } from 'next/font/google'
 
 const inter = Inter({ 
@@ -28,7 +25,6 @@ const outfit = Outfit({
   variable: '--font-outfit',
   display: 'swap',
 })
-////////-----------------------
 
 export const metadata: Metadata = {
   title: "Portfolio - Proyectos",
@@ -42,8 +38,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+    <html lang="es" className={`${inter.variable} ${poppins.variable} ${outfit.variable}`}>
+      <body className={`${inter.className} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           {children}
           <Toaster />
