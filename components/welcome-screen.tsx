@@ -54,7 +54,7 @@ export function WelcomeScreen() {
       }`}>
         {/* Texto con animación de aparición escalonada */}
         <div className="overflow-hidden">
-          <h1 className="font-display text-6xl sm:text-8xl lg:text-9xl font-bold text-primary-foreground mb-4 animate-slide-up">
+          <h1 style={{ fontFamily: 'var(--font-poppins)' }} className="text-6xl sm:text-8xl lg:text-9xl font-bold text-primary-foreground mb-4 animate-slide-up">
             Bienvenido
           </h1>
         </div>
