@@ -5,24 +5,11 @@ import { Toaster } from "@/components/ui/toaster"
 import { Suspense } from "react"
 import "./globals.css"
 
-import { Inter, Poppins, Outfit } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
-const inter = Inter({ 
+const sfPro = Inter({ 
   subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const poppins = Poppins({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-poppins',
-  display: 'swap',
-})
-
-const outfit = Outfit({ 
-  subsets: ['latin'],
-  variable: '--font-outfit',
+  variable: '--font-sf-pro',
   display: 'swap',
 })
 
@@ -38,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${poppins.variable} ${outfit.variable}`}>
-      <body className={`${inter.className} antialiased`}>
+    <html lang="es" className={sfPro.variable}>
+      <body className={`${sfPro.className} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           {children}
           <Toaster />
