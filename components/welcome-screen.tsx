@@ -61,7 +61,7 @@ export function WelcomeScreen() {
         
         <div className="overflow-hidden animation-delay-300">
           <p className="text-xl sm:text-2xl lg:text-3xl text-primary-foreground/80 animate-slide-up animation-delay-500">
-            Al portafolio de Aarón Córdova
+            A mi portafolio Aarón Córdova
           </p>
         </div>
 
