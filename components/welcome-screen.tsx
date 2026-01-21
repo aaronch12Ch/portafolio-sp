@@ -4,17 +4,26 @@ import { useState, useEffect } from 'react'
 
 export function WelcomeScreen() {
   const [isVisible, setIsVisible] = useState(true)
+  const [shouldRender, setShouldRender] = useState(true)
 
   useEffect(() => {
-    // Ocultar después de 3 segundos
-    const timer = setTimeout(() => {
+    // Iniciar animación de salida después de 3 segundos
+    const hideTimer = setTimeout(() => {
       setIsVisible(false)
     }, 3000)
 
-    return () => clearTimeout(timer)
+    // Remover completamente del DOM después de que termine la animación
+    const removeTimer = setTimeout(() => {
+      setShouldRender(false)
+    }, 4000) // 3000ms + 1000ms de animación
+
+    return () => {
+      clearTimeout(hideTimer)
+      clearTimeout(removeTimer)
+    }
   }, [])
 
-  if (!isVisible) return null
+  if (!shouldRender) return null
 
   return (
     <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-primary via-primary/90 to-accent animate-gradient-shift overflow-hidden transition-all duration-1000 ${
@@ -54,7 +63,7 @@ export function WelcomeScreen() {
       }`}>
         {/* Texto con animación de aparición escalonada */}
         <div className="overflow-hidden">
-          <h1 className="font-[var(--font-sf-pro)] text-6xl sm:text-8xl lg:text-9xl font-bold text-primary-foreground mb-4 animate-slide-up">
+          <h1 className="text-6xl sm:text-8xl lg:text-9xl font-bold text-primary-foreground mb-4 animate-slide-up">
             Bienvenido
           </h1>
         </div>
