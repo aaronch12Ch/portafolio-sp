@@ -53,7 +53,7 @@ export function ProjectCarousel({ proyectos }: ProjectCarouselProps) {
   }, [isAnimating, isDragging, proyectos.length])
 
   // Si hay 3 o menos proyectos, mostramos el grid normal
-  if (proyectos.length <= 3) {
+  if (proyectos.length <= 2) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {proyectos.map((proyecto, i) => (
