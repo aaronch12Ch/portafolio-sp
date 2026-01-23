@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function TechSphere() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isHovering = useRef(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -41,20 +42,14 @@ export default function TechSphere() {
 
       scene = new THREE.Scene();
 
-      const aspect = containerRef.current!.clientWidth /
-          containerRef.current!.clientHeight;
-      
-      // Ajustar FOV según el aspect ratio
-      const fov = aspect > 1 ? 75 : 60;
-      
-      camera = new THREE.PerspectiveCamera(
-        fov,
-        aspect,
-        0.1,
-        1000
-      );
-      camera.position.z = aspect > 1 ? 7.5 : 6.5;
+      const aspect =
+        containerRef.current!.clientWidth /
+        containerRef.current!.clientHeight;
 
+      const isMobile = window.innerWidth < 768;
+
+      camera = new THREE.PerspectiveCamera(aspect > 1 ? 75 : 60, aspect, 0.1, 1000);
+      camera.position.z = isMobile ? 6.2 : 7.8;
 
       renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -72,7 +67,7 @@ export default function TechSphere() {
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2(-999, -999);
 
-      // Partículas de fondo
+      // Partículas
       const particleGeometry = new THREE.BufferGeometry();
       const particleCount = 100;
       const positions = new Float32Array(particleCount * 3);
@@ -88,21 +83,19 @@ export default function TechSphere() {
         new THREE.BufferAttribute(positions, 3)
       );
 
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.05,
-        transparent: true,
-        opacity: 0.3,
-      });
-
       const particleSystem = new THREE.Points(
         particleGeometry,
-        particleMaterial
+        new THREE.PointsMaterial({
+          size: 0.05,
+          transparent: true,
+          opacity: 0.3,
+        })
       );
+
       scene.add(particleSystem);
       particles.push(particleSystem);
 
-      // Crear labels
+      // Labels
       technologies.forEach((tech, index) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d")!;
@@ -117,21 +110,18 @@ export default function TechSphere() {
 
         const texture = new THREE.CanvasTexture(canvas);
 
-        const material = new THREE.SpriteMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.95,
-        });
+        const sprite = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: texture,
+            transparent: true,
+            opacity: 0.95,
+          })
+        );
 
-        const sprite = new THREE.Sprite(material);
-
-        // distribución esfera
         const phi = Math.acos(-1 + (2 * index) / technologies.length);
         const theta = Math.sqrt(technologies.length * Math.PI) * phi;
 
-        const isMobile = window.innerWidth < 768;
-        const radius = isMobile ? 2.1 : 2.8;
-
+        const radius = isMobile ? 2.7 : 2.9;
 
         sprite.position.set(
           radius * Math.cos(theta) * Math.sin(phi),
@@ -139,11 +129,9 @@ export default function TechSphere() {
           radius * Math.cos(phi)
         );
 
-        const baseScale = isMobile ? 1.4 : 1.8;
+        const baseScale = isMobile ? 1.7 : 1.9;
         sprite.scale.set(baseScale, baseScale * 0.25, 1);
 
-
-        // Guardar datos originales
         sprite.userData = {
           originalScale: sprite.scale.clone(),
           originalPosition: sprite.position.clone(),
@@ -167,136 +155,52 @@ export default function TechSphere() {
         mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       };
 
-      const onClick = () => {
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(labels);
-
-        if (intersects.length > 0) {
-          const clicked = intersects[0].object;
-          selectedLabel = selectedLabel === clicked ? null : clicked;
-        } else {
-          selectedLabel = null;
-        }
+      const onEnter = () => (isHovering.current = true);
+      const onLeave = () => {
+        isHovering.current = false;
+        mouseX = 0;
+        mouseY = 0;
       };
 
+      containerRef.current!.addEventListener("mouseenter", onEnter);
+      containerRef.current!.addEventListener("mouseleave", onLeave);
+
       window.addEventListener("pointermove", onPointerMove);
-      window.addEventListener("click", onClick);
 
       const animate = () => {
         requestAnimationFrame(animate);
 
         const time = Date.now() * 0.001;
 
-        const rotX = mouseY * 0.3;
-        const rotY = mouseX * 0.3;
+        const rotX = isHovering.current ? mouseY * 0.35 : 0;
+        const rotY = isHovering.current ? mouseX * 0.35 : 0;
 
         scene.rotation.x += (rotX - scene.rotation.x) * 0.05;
         scene.rotation.y += (rotY - scene.rotation.y) * 0.05;
 
-        // auto rotación
-        const isMobile = window.innerWidth < 768;
-        scene.rotation.y += isMobile ? 0.006 : 0.002;
-
-        scene.rotation.x = Math.max(-0.6, Math.min(0.6, scene.rotation.x));
-
-        // Animar partículas
-        particles.forEach((p) => {
-          p.rotation.y += 0.001;
-        });
-
-        // Raycaster para hover
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(labels);
+        scene.rotation.y += isMobile ? 0.008 : 0.003;
 
         labels.forEach((label) => {
-          const isIntersected = intersects.some((i) => i.object === label);
-          const isSelected = label === selectedLabel;
-
-          // Efecto de flotación
           const floatY =
             Math.sin(time * 2 + label.userData.floatOffset) * 0.05;
-          
-          // Posición objetivo
-          let targetPosition = label.userData.originalPosition.clone();
+
+          const targetPosition = label.userData.originalPosition.clone();
           targetPosition.y += floatY;
 
-          // Zoom según interacción
-          if (isSelected) {
-            // Mover al centro cuando está seleccionado
-            targetPosition.set(0, 0, 0);
-            label.userData.targetScale = label.userData.originalScale
-              .clone()
-              .multiplyScalar(1.8);
-            label.material.opacity = 1;
-          } else if (isIntersected) {
-            // Acercar al centro en hover
-            const directionToCenter = new THREE.Vector3(0, 0, 0)
-              .sub(label.position)
-              .multiplyScalar(0.3);
-            targetPosition.add(directionToCenter);
-            
-            label.userData.targetScale = label.userData.originalScale
-              .clone()
-              .multiplyScalar(1.35);
-            label.material.opacity = 1;
-            if (containerRef.current) {
-              containerRef.current.style.cursor = "pointer";
-            }
-          } else {
-            label.userData.targetScale =
-              label.userData.originalScale.clone();
-            label.material.opacity = 0.95;
-          }
-
-          // Animación suave de posición
           label.position.lerp(targetPosition, 0.1);
-
-          // Animación suave de escala con efecto elástico
           label.scale.lerp(label.userData.targetScale, 0.15);
-
-          // Pulso de opacidad en hover
-          if (isIntersected || isSelected) {
-            const pulse = Math.sin(time * 3) * 0.05 + 0.95;
-            label.material.opacity = pulse;
-          }
-
           label.lookAt(camera.position);
         });
-
-        if (intersects.length === 0 && containerRef.current) {
-          containerRef.current.style.cursor = "default";
-        }
 
         renderer.render(scene, camera);
       };
 
       animate();
 
-      const onResize = () => {
-        const w = containerRef.current!.clientWidth;
-        const h = containerRef.current!.clientHeight;
-        const aspect = w / h;
-        
-        camera.aspect = aspect;
-        
-        // Ajustar FOV y posición al redimensionar
-        camera.fov = aspect > 1 ? 75 : 60;
-        camera.position.z = aspect > 1 ? 7.5 : 6.5;
-
-        
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      };
-
-      window.addEventListener("resize", onResize);
-
       return () => {
+        containerRef.current?.removeEventListener("mouseenter", onEnter);
+        containerRef.current?.removeEventListener("mouseleave", onLeave);
         window.removeEventListener("pointermove", onPointerMove);
-        window.removeEventListener("click", onClick);
-        window.removeEventListener("resize", onResize);
-        if (containerRef.current && renderer.domElement.parentNode) {
-          containerRef.current.removeChild(renderer.domElement);
-        }
         renderer.dispose();
       };
     };
