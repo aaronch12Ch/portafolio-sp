@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function TechSphere() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isHovering = useRef(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -45,10 +46,10 @@ export default function TechSphere() {
         containerRef.current!.clientWidth /
         containerRef.current!.clientHeight;
 
-      const fov = aspect > 1 ? 75 : 60;
+      const isMobile = window.innerWidth < 768;
 
-      camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
-      camera.position.z = aspect > 1 ? 7.5 : 6.5;
+      camera = new THREE.PerspectiveCamera(aspect > 1 ? 75 : 60, aspect, 0.1, 1000);
+      camera.position.z = isMobile ? 6.2 : 7.8;
 
       renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -82,17 +83,15 @@ export default function TechSphere() {
         new THREE.BufferAttribute(positions, 3)
       );
 
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.05,
-        transparent: true,
-        opacity: 0.3,
-      });
-
       const particleSystem = new THREE.Points(
         particleGeometry,
-        particleMaterial
+        new THREE.PointsMaterial({
+          size: 0.05,
+          transparent: true,
+          opacity: 0.3,
+        })
       );
+
       scene.add(particleSystem);
       particles.push(particleSystem);
 
@@ -111,19 +110,18 @@ export default function TechSphere() {
 
         const texture = new THREE.CanvasTexture(canvas);
 
-        const material = new THREE.SpriteMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.95,
-        });
-
-        const sprite = new THREE.Sprite(material);
+        const sprite = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: texture,
+            transparent: true,
+            opacity: 0.95,
+          })
+        );
 
         const phi = Math.acos(-1 + (2 * index) / technologies.length);
         const theta = Math.sqrt(technologies.length * Math.PI) * phi;
 
-        const isMobile = window.innerWidth < 768;
-        const radius = isMobile ? 2.6 : 3.0;
+        const radius = isMobile ? 2.7 : 2.9;
 
         sprite.position.set(
           radius * Math.cos(theta) * Math.sin(phi),
@@ -131,7 +129,7 @@ export default function TechSphere() {
           radius * Math.cos(phi)
         );
 
-        const baseScale = isMobile ? 1.8 : 2.0;
+        const baseScale = isMobile ? 1.7 : 1.9;
         sprite.scale.set(baseScale, baseScale * 0.25, 1);
 
         sprite.userData = {
@@ -157,59 +155,39 @@ export default function TechSphere() {
         mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       };
 
-      const onClick = () => {
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(labels);
-
-        if (intersects.length > 0) {
-          const clicked = intersects[0].object;
-          selectedLabel = selectedLabel === clicked ? null : clicked;
-        } else {
-          selectedLabel = null;
-        }
+      const onEnter = () => (isHovering.current = true);
+      const onLeave = () => {
+        isHovering.current = false;
+        mouseX = 0;
+        mouseY = 0;
       };
 
+      containerRef.current!.addEventListener("mouseenter", onEnter);
+      containerRef.current!.addEventListener("mouseleave", onLeave);
+
       window.addEventListener("pointermove", onPointerMove);
-      window.addEventListener("pointerdown", onClick);
 
       const animate = () => {
         requestAnimationFrame(animate);
 
         const time = Date.now() * 0.001;
 
-        const rotX = mouseY * 0.3;
-        const rotY = mouseX * 0.3;
+        const rotX = isHovering.current ? mouseY * 0.35 : 0;
+        const rotY = isHovering.current ? mouseX * 0.35 : 0;
 
         scene.rotation.x += (rotX - scene.rotation.x) * 0.05;
         scene.rotation.y += (rotY - scene.rotation.y) * 0.05;
 
-        const isMobile = window.innerWidth < 768;
-        scene.rotation.y += isMobile ? 0.006 : 0.002;
-
-        scene.rotation.x = Math.max(-0.6, Math.min(0.6, scene.rotation.x));
-
-        particles.forEach((p) => {
-          p.rotation.y += 0.001;
-        });
+        scene.rotation.y += isMobile ? 0.008 : 0.003;
 
         labels.forEach((label) => {
           const floatY =
             Math.sin(time * 2 + label.userData.floatOffset) * 0.05;
 
-          let targetPosition = label.userData.originalPosition.clone();
+          const targetPosition = label.userData.originalPosition.clone();
           targetPosition.y += floatY;
 
-          if (label === selectedLabel) {
-            targetPosition.set(0, 0, 0);
-            label.userData.targetScale = label.userData.originalScale
-              .clone()
-              .multiplyScalar(2.2);
-          } else {
-            label.userData.targetScale =
-              label.userData.originalScale.clone();
-          }
-
-          label.position.lerp(targetPosition, 0.12);
+          label.position.lerp(targetPosition, 0.1);
           label.scale.lerp(label.userData.targetScale, 0.15);
           label.lookAt(camera.position);
         });
@@ -219,30 +197,10 @@ export default function TechSphere() {
 
       animate();
 
-      const onResize = () => {
-        const w = containerRef.current!.clientWidth;
-        const h = containerRef.current!.clientHeight;
-        const aspect = w / h;
-
-        camera.aspect = aspect;
-        camera.fov = aspect > 1 ? 75 : 60;
-        camera.position.z = aspect > 1 ? 7.5 : 6.5;
-
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      };
-
-      window.addEventListener("resize", onResize);
-
       return () => {
+        containerRef.current?.removeEventListener("mouseenter", onEnter);
+        containerRef.current?.removeEventListener("mouseleave", onLeave);
         window.removeEventListener("pointermove", onPointerMove);
-        window.removeEventListener("pointerdown", onClick);
-        window.removeEventListener("resize", onResize);
-
-        if (containerRef.current && renderer.domElement.parentNode) {
-          containerRef.current.removeChild(renderer.domElement);
-        }
-
         renderer.dispose();
       };
     };
