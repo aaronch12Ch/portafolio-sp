@@ -61,26 +61,26 @@ export default async function HomePage() {
             </div>
 
             <div className="relative z-10 max-w-xl">
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-[1.1]">
                 Backend y
                 <br />
                 DBA.
               </h1>
-              <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
+              <p className="text-lg sm:text-xl text-primary-foreground/90 mb-5 leading-relaxed">
                 Ingeniero en Sistemas Computacionales.
                 <br />
                 Construyo productos digitales escalables con experiencias de usuario excepcionales.
               </p>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
                 {/* Texto */}
-                <div className="space-y-4 text-center lg:text-left">
+                <div className="space-y-2 text-center lg:text-left">
 
-                  <h3 className=" font-bold">
+                  <h3 className="text-lg sm:text-xl font-semibold leading-snug">
                     Altamente capacitado en tecnologías modernas
                   </h3>
 
-                  <p className=" max-w-md mx-auto lg:mx-0">
+                  <p className="text-sm sm:text-base text-primary-foreground/80 max-w-md mx-auto lg:mx-0 leading-relaxed">
                     Desarrollo backend y frontend con arquitecturas escalables, seguras y
                     listas para producción usando herramientas actuales del ecosistema web.
                   </p>
