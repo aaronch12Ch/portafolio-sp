@@ -75,29 +75,15 @@ export default async function HomePage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                 {/* Texto */}
                 <div className="space-y-4 text-center lg:text-left">
-                  <p className="text-sm uppercase tracking-wider text-muted-foreground">
-                    Stack principal
-                  </p>
 
-                  <h3 className="text-2xl md:text-3xl font-bold">
+                  <h3 className=" font-bold">
                     Altamente capacitado en tecnologías modernas
                   </h3>
 
-                  <p className="text-muted-foreground max-w-md mx-auto lg:mx-0">
+                  <p className=" max-w-md mx-auto lg:mx-0">
                     Desarrollo backend y frontend con arquitecturas escalables, seguras y
                     listas para producción usando herramientas actuales del ecosistema web.
                   </p>
-
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-3 text-xs">
-                    {["Backend", "APIs", "Cloud", "UI/UX", "Performance"].map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 rounded-full bg-primary/10 text-primary"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Esfera */}
