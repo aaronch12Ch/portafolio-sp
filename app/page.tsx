@@ -50,7 +50,7 @@ export default function HomePage() {
                   <h3 className="font-bold text-accent">Sistemas Escalables</h3>
                   <p className="text-sm opacity-80">Arquitecturas listas para producción.</p>
                 </div>
-                <div className="w-48 h-48 lg:w-64 lg:h-64">
+                <div className="w-50 h-50 lg:w-72 lg:h-72">
                   <TechSphere />
                 </div>
               </div>
