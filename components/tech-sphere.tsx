@@ -107,7 +107,18 @@ export default function TechSphere() {
         mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
       };
 
+      const onTouchMove = (e: TouchEvent) => {
+        if (!e.touches.length) return;
+
+        const touch = e.touches[0];
+        mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(touch.clientY / window.innerHeight) * 2 + 1;
+      };
+
+
       window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("touchmove", onTouchMove, { passive: true });
+
 
       const animate = () => {
         requestAnimationFrame(animate);
@@ -119,7 +130,11 @@ export default function TechSphere() {
         scene.rotation.y += (rotY - scene.rotation.y) * 0.05;
 
         // auto rotación
-        scene.rotation.y += 0.002;
+        const isMobile = window.innerWidth < 768;
+        scene.rotation.y += isMobile ? 0.006 : 0.002;
+
+        scene.rotation.x = Math.max(-0.6, Math.min(0.6, scene.rotation.x));
+
 
         labels.forEach((l) => l.lookAt(camera.position));
 
@@ -143,6 +158,8 @@ export default function TechSphere() {
 
       return () => {
         window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("touchmove", onTouchMove);
+
         window.removeEventListener("resize", onResize);
         renderer.dispose();
       };
