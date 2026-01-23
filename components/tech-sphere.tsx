@@ -167,6 +167,21 @@ export default function TechSphere() {
 
       window.addEventListener("pointermove", onPointerMove);
 
+      const onClick = () => {
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(labels);
+
+        if (intersects.length > 0) {
+          const clicked = intersects[0].object;
+          selectedLabel = selectedLabel === clicked ? null : clicked;
+        } else {
+          selectedLabel = null;
+        }
+      };
+
+      window.addEventListener("pointerdown", onClick);
+
+
       const animate = () => {
         requestAnimationFrame(animate);
 
@@ -184,13 +199,24 @@ export default function TechSphere() {
           const floatY =
             Math.sin(time * 2 + label.userData.floatOffset) * 0.05;
 
-          const targetPosition = label.userData.originalPosition.clone();
+          let targetPosition = label.userData.originalPosition.clone();
           targetPosition.y += floatY;
 
-          label.position.lerp(targetPosition, 0.1);
+          if (label === selectedLabel) {
+            targetPosition.set(0, 0, 0);
+            label.userData.targetScale = label.userData.originalScale
+              .clone()
+              .multiplyScalar(2);
+          } else {
+            label.userData.targetScale =
+              label.userData.originalScale.clone();
+          }
+
+          label.position.lerp(targetPosition, 0.12);
           label.scale.lerp(label.userData.targetScale, 0.15);
           label.lookAt(camera.position);
         });
+
 
         renderer.render(scene, camera);
       };
@@ -200,6 +226,7 @@ export default function TechSphere() {
       return () => {
         containerRef.current?.removeEventListener("mouseenter", onEnter);
         containerRef.current?.removeEventListener("mouseleave", onLeave);
+        window.removeEventListener("pointerdown", onClick);
         window.removeEventListener("pointermove", onPointerMove);
         renderer.dispose();
       };
