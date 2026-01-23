@@ -69,8 +69,7 @@ export default function TechSphere() {
         canvas.width = 512;
         canvas.height = 128;
 
-        // ---- TEXTO CURVEADO ----
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // TEXTO CURVEADO
         ctx.font = "bold 48px Arial";
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
@@ -139,17 +138,8 @@ export default function TechSphere() {
         mouseY = mouse.y;
       };
 
-      const onTouchStart = (e: TouchEvent) => {
-        if (!e.touches.length) return;
-        const t = e.touches[0];
-
-        mouse.x = (t.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(t.clientY / window.innerHeight) * 2 + 1;
-      };
-
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("touchmove", onTouchMove, { passive: true });
-      window.addEventListener("touchstart", onTouchStart, { passive: true });
 
       const animate = () => {
         requestAnimationFrame(animate);
@@ -165,7 +155,6 @@ export default function TechSphere() {
 
         scene.rotation.x = Math.max(-0.6, Math.min(0.6, scene.rotation.x));
 
-        // ---- HOVER ZOOM ----
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(labels);
 
@@ -175,10 +164,8 @@ export default function TechSphere() {
           const targetScale = isHover ? 2.4 : 1.8;
           const targetOpacity = isHover ? 1 : 0.75;
 
-          label.scale.lerp(
-            new THREE.Vector3(targetScale, targetScale * 0.25, 1),
-            0.1
-          );
+          label.scale.x += (targetScale - label.scale.x) * 0.1;
+          label.scale.y += ((targetScale * 0.25) - label.scale.y) * 0.1;
 
           label.material.opacity +=
             (targetOpacity - label.material.opacity) * 0.1;
@@ -208,7 +195,6 @@ export default function TechSphere() {
       return () => {
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("touchmove", onTouchMove);
-        window.removeEventListener("touchstart", onTouchStart);
         window.removeEventListener("resize", onResize);
         renderer.dispose();
       };
