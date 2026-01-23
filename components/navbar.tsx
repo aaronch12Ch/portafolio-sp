@@ -30,42 +30,43 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-[100] flex items-center">
+    <nav className="fixed top-0 left-0 right-0 h-16 border-b border-border bg-white md:bg-white/80 md:backdrop-blur-md z-[100] flex items-center">
       <div className="container mx-auto px-4 flex justify-between items-center w-full">
         {/* LOGO - Se mantiene visible siempre */}
         <Link href="/" className="relative z-[120]" onClick={() => setIsMenuOpen(false)}>
-          <span className="text-xl font-black tracking-tighter">Aarón Córdova</span>
+          <span className="text-xl font-black tracking-tighter text-black">Aarón Córdova</span>
         </Link>
 
         {/* DESKTOP MENU */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6 text-black">
           <button onClick={() => scrollToSection('inicio')} className="text-sm font-medium hover:text-primary transition-colors">Inicio</button>
           <button onClick={() => scrollToSection('habilidades')} className="text-sm font-medium hover:text-primary transition-colors">Habilidades</button>
           <button onClick={() => scrollToSection('proyectos')} className="text-sm font-medium hover:text-primary transition-colors">Proyectos</button>
           {user ? (
-            <Button onClick={handleLogout} variant="outline" size="sm">Salir</Button>
+            <Button onClick={handleLogout} variant="outline" size="sm" className="text-black border-black">Salir</Button>
           ) : (
-            <Button asChild size="sm" className="rounded-full"><Link href="/login">Ingresar</Link></Button>
+            <Button asChild size="sm" className="rounded-full bg-black text-white"><Link href="/login">Ingresar</Link></Button>
           )}
         </div>
 
-        {/* BOTÓN HAMBURGUESA / X - Con Z-index máximo */}
+        {/* BOTÓN HAMBURGUESA / X - Con Z-index máximo y color negro */}
         <button 
-          className="md:hidden relative z-[130] p-2 bg-background rounded-full" 
+          className="md:hidden relative z-[130] p-2" 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle Menu"
         >
-          {isMenuOpen ? <X className="h-8 w-8 text-black" /> : <Menu className="h-8 w-8" />}
+          {isMenuOpen ? <X className="h-8 w-8 text-black" /> : <Menu className="h-8 w-8 text-black" />}
         </button>
       </div>
 
-      {/* PANEL MÓVIL - CUBRE TODO CON BLANCO SÓLIDO */}
+      {/* PANEL MÓVIL - CUBRE TODO CON BLANCO TOTALMENTE SÓLIDO */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-[110] md:hidden flex flex-col justify-center items-center overflow-hidden"
+            className="fixed inset-0 bg-white z-[110] md:hidden flex flex-col justify-center items-center"
           >
             {/* Lista de enlaces centrados y limpios */}
             <div className="flex flex-col gap-10 items-center w-full px-10">
@@ -101,7 +102,7 @@ export function Navbar() {
                 </div>
               ) : (
                 <Button asChild className="w-full h-16 text-xl bg-black text-white rounded-2xl shadow-xl">
-                  <Link href="/login">Iniciar Sesión</Link>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
                 </Button>
               )}
             </div>
