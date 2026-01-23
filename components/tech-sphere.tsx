@@ -53,7 +53,8 @@ export default function TechSphere() {
         0.1,
         1000
       );
-      camera.position.z = aspect > 1 ? 7 : 6;
+      camera.position.z = aspect > 1 ? 7.5 : 6.5;
+
 
       renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -128,7 +129,9 @@ export default function TechSphere() {
         const phi = Math.acos(-1 + (2 * index) / technologies.length);
         const theta = Math.sqrt(technologies.length * Math.PI) * phi;
 
-        const radius = 2.6;
+        const isMobile = window.innerWidth < 768;
+        const radius = isMobile ? 2.1 : 2.8;
+
 
         sprite.position.set(
           radius * Math.cos(theta) * Math.sin(phi),
@@ -136,7 +139,9 @@ export default function TechSphere() {
           radius * Math.cos(phi)
         );
 
-        sprite.scale.set(1.8, 0.45, 1);
+        const baseScale = isMobile ? 1.4 : 1.8;
+        sprite.scale.set(baseScale, baseScale * 0.25, 1);
+
 
         // Guardar datos originales
         sprite.userData = {
@@ -221,7 +226,7 @@ export default function TechSphere() {
             targetPosition.set(0, 0, 0);
             label.userData.targetScale = label.userData.originalScale
               .clone()
-              .multiplyScalar(2.2);
+              .multiplyScalar(1.8);
             label.material.opacity = 1;
           } else if (isIntersected) {
             // Acercar al centro en hover
@@ -232,7 +237,7 @@ export default function TechSphere() {
             
             label.userData.targetScale = label.userData.originalScale
               .clone()
-              .multiplyScalar(1.5);
+              .multiplyScalar(1.35);
             label.material.opacity = 1;
             if (containerRef.current) {
               containerRef.current.style.cursor = "pointer";
@@ -276,7 +281,8 @@ export default function TechSphere() {
         
         // Ajustar FOV y posición al redimensionar
         camera.fov = aspect > 1 ? 75 : 60;
-        camera.position.z = aspect > 1 ? 7 : 6;
+        camera.position.z = aspect > 1 ? 7.5 : 6.5;
+
         
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
