@@ -61,12 +61,12 @@ export default async function HomePage() {
             </div>
 
             <div className="relative z-10 max-w-xl">
-              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-[1.1]">
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold mb-2 leading-[1.1]">
                 Backend y
                 <br />
                 DBA.
               </h1>
-              <p className="text-lg sm:text-xl text-primary-foreground/90 mb-5 leading-relaxed">
+              <p className="text-lg sm:text-xl text-primary-foreground/90 mb-3 leading-relaxed">
                 Ingeniero en Sistemas Computacionales.
                 <br />
                 Construyo productos digitales escalables con experiencias de usuario excepcionales.
