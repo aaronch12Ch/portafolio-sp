@@ -54,7 +54,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 border-b border-border bg-background/80 backdrop-blur-md z-[100]">
+    <nav className="fixed top-0 left-0 right-0 border-b border-border bg-background/70 backdrop-blur-md z-[100]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="z-[110]">
