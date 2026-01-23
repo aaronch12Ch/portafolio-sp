@@ -29,81 +29,75 @@ export function Navbar() {
     setIsMenuOpen(false)
   }
 
-  // Variantes para el panel del menú móvil
   const menuVariants = {
-    closed: {
-      opacity: 0,
-      y: "-100%",
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
-    },
-    opened: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
-    }
+    closed: { opacity: 0, x: "100%", transition: { duration: 0.3 } },
+    opened: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } }
   }
 
-  // Variantes para los links individuales (aparición escalonada)
   const linkVariants = {
-    closed: { opacity: 0, x: -20 },
+    closed: { opacity: 0, y: 20 },
     opened: (i: number) => ({
       opacity: 1,
-      x: 0,
-      transition: { delay: 0.2 + i * 0.1 }
+      y: 0,
+      transition: { delay: 0.1 * i + 0.2 }
     })
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 border-b border-border bg-background/70 backdrop-blur-md z-[100]">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="z-[110]">
-            <span className="text-xl font-black tracking-tighter">Aarón.dev</span>
+    <nav className="fixed top-0 left-0 right-0 border-b border-border bg-background/95 backdrop-blur-md z-[100] h-16 flex items-center">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between">
+          {/* LOGO */}
+          <Link href="/" className="z-[110]" onClick={() => setIsMenuOpen(false)}>
+            <span className="text-xl font-black tracking-tighter text-primary">Aarón Córdova</span>
           </Link>
 
           {/* DESKTOP MENU */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             <button onClick={() => scrollToSection('inicio')} className="text-sm font-medium hover:text-primary transition-colors">Inicio</button>
             <button onClick={() => scrollToSection('habilidades')} className="text-sm font-medium hover:text-primary transition-colors">Habilidades</button>
             <button onClick={() => scrollToSection('proyectos')} className="text-sm font-medium hover:text-primary transition-colors">Proyectos</button>
             {user ? (
-              <div className="flex items-center gap-3 ml-4">
+              <>
                 {isAdmin() && (
                   <Button asChild variant="ghost" size="sm">
-                    <Link href="/admin"><LayoutDashboard className="h-4 w-4 mr-2" />Admin</Link>
+                    <Link href="/admin"><LayoutDashboard className="h-4 w-4 mr-1" /> Admin</Link>
                   </Button>
                 )}
                 <Button onClick={handleLogout} variant="outline" size="sm">Salir</Button>
-              </div>
+              </>
             ) : (
-              <Button asChild size="sm" className="ml-4 rounded-full">
+              <Button asChild size="sm" className="rounded-full px-6">
                 <Link href="/login">Ingresar</Link>
               </Button>
             )}
           </div>
 
-          {/* BOTÓN HAMBURGUESA ANIMADO */}
+          {/* BOTÓN HAMBURGUESA (Visibilidad mejorada) */}
           <button 
-            className="md:hidden z-[110] relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none"
+            className="md:hidden z-[110] relative w-12 h-12 flex flex-col justify-center items-center focus:outline-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Menu"
           >
-            <motion.span 
-              animate={isMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="w-8 h-0.5 bg-foreground block rounded-full"
-            />
-            <motion.span 
-              animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="w-8 h-0.5 bg-foreground block rounded-full"
-            />
-            <motion.span 
-              animate={isMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="w-8 h-0.5 bg-foreground block rounded-full"
-            />
+            <div className="flex flex-col gap-1.5 w-7">
+              <motion.span 
+                animate={isMenuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+                className="w-full h-1 bg-primary block rounded-full"
+              />
+              <motion.span 
+                animate={isMenuOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
+                className="w-full h-1 bg-primary block rounded-full"
+              />
+              <motion.span 
+                animate={isMenuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+                className="w-full h-1 bg-primary block rounded-full"
+              />
+            </div>
           </button>
         </div>
       </div>
 
-      {/* PANEL DE MENÚ MÓVIL ANIMADO */}
+      {/* PANEL DE MENÚ MÓVIL */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
@@ -111,41 +105,39 @@ export function Navbar() {
             initial="closed"
             animate="opened"
             exit="closed"
-            className="fixed inset-0 bg-background flex flex-col justify-center items-center gap-8 z-[105] md:hidden"
+            className="fixed inset-0 bg-background z-[105] md:hidden flex flex-col pt-24 px-8 shadow-2xl"
           >
-            {[
-              { id: 'inicio', label: 'Inicio', icon: <User /> },
-              { id: 'habilidades', label: 'Habilidades', icon: <Code /> },
-              { id: 'proyectos', label: 'Proyectos', icon: <FolderRoot /> }
-            ].map((link, i) => (
-              <motion.button
-                key={link.id}
-                custom={i}
-                variants={linkVariants}
-                onClick={() => scrollToSection(link.id)}
-                className="text-4xl font-black flex items-center gap-4 hover:text-primary transition-colors"
-              >
-                <span className="text-primary text-2xl">{link.icon}</span>
-                {link.label}
-              </motion.button>
-            ))}
+            <div className="flex flex-col gap-8">
+              {[
+                { id: 'inicio', label: 'Inicio', icon: <User className="w-6 h-6" /> },
+                { id: 'habilidades', label: 'Habilidades', icon: <Code className="w-6 h-6" /> },
+                { id: 'proyectos', label: 'Proyectos', icon: <FolderRoot className="w-6 h-6" /> }
+              ].map((link, i) => (
+                <motion.button
+                  key={link.id}
+                  custom={i}
+                  variants={linkVariants}
+                  onClick={() => scrollToSection(link.id)}
+                  className="flex items-center gap-4 text-3xl font-bold text-foreground border-b border-border pb-4 active:text-primary"
+                >
+                  <span className="p-2 bg-primary/10 rounded-xl text-primary">{link.icon}</span>
+                  {link.label}
+                </motion.button>
+              ))}
 
-            <motion.div 
-              variants={linkVariants} 
-              custom={4} 
-              className="mt-8 flex flex-col items-center gap-4 w-full px-10"
-            >
-              {user ? (
-                <>
-                  <p className="text-muted-foreground">Hola, {user.username}</p>
-                  <Button onClick={handleLogout} variant="outline" className="w-full py-6 text-xl">Cerrar Sesión</Button>
-                </>
-              ) : (
-                <Button asChild className="w-full py-6 text-xl rounded-2xl">
-                  <Link href="/login">Iniciar Sesión</Link>
-                </Button>
-              )}
-            </motion.div>
+              <motion.div variants={linkVariants} custom={3} className="pt-4 flex flex-col gap-4">
+                {user ? (
+                  <>
+                    <p className="text-muted-foreground italic text-center">Usuario: {user.username}</p>
+                    <Button onClick={handleLogout} variant="outline" className="w-full h-14 text-lg">Cerrar Sesión</Button>
+                  </>
+                ) : (
+                  <Button asChild className="w-full h-14 text-lg rounded-xl">
+                    <Link href="/login">Iniciar Sesión</Link>
+                  </Button>
+                )}
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
