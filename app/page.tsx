@@ -25,7 +25,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <main className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth bg-background">
+    <main className="h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth bg-background">
       <WelcomeScreen />
       <AutoLogout />
       <Navbar />
