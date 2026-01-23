@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LogOut, LayoutDashboard, User, Code, FolderRoot, X, Menu } from "lucide-react"
+import { LogOut, LayoutDashboard, User, Code, FolderRoot, X, Menu ,MessageCircle} from "lucide-react"
 import { useEffect, useState } from "react"
 import { getUser, clearAuth, isAdmin } from "@/lib/auth"
 import { motion, AnimatePresence } from "framer-motion"
@@ -42,6 +42,7 @@ export function Navbar() {
           <button onClick={() => scrollToSection('inicio')} className="text-sm font-medium hover:text-primary transition-colors">Inicio</button>
           <button onClick={() => scrollToSection('habilidades')} className="text-sm font-medium hover:text-primary transition-colors">Habilidades</button>
           <button onClick={() => scrollToSection('proyectos')} className="text-sm font-medium hover:text-primary transition-colors">Proyectos</button>
+          <button onClick={() => scrollToSection('contacto')} className="text-sm font-medium hover:text-primary transition-colors">Contacto</button>
           {user ? (
             <Button onClick={handleLogout} variant="outline" size="sm" className="text-black border-black">Salir</Button>
           ) : (
@@ -89,6 +90,12 @@ export function Navbar() {
                 className="flex items-center gap-4 text-4xl font-black text-black"
               >
                 <FolderRoot className="h-8 w-8 text-primary" /> Proyectos
+              </button>
+              <button
+                onClick={() => scrollToSection('contacto')}
+                className="flex items-center gap-4 text-4xl font-black text-black"
+              >
+                <MessageCircle className="h-8 w-8 text-primary" /> Contacto
               </button>
 
               <div className="w-full h-px bg-gray-200 my-4" />

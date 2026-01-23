@@ -44,11 +44,14 @@ export default function HomePage() {
 
             <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} className="relative z-10">
               <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-none">Backend y <br /> DBA.</h1>
-              <p className="text-lg opacity-90 mb-8 max-w-md">Ingeniero en Sistemas Computacionales construyendo experiencias excepcionales.</p>
+              <p className="text-lg opacity-90 mb-8 max-w-md">Ingeniero en Sistemas Computacionales.
+                <br/>
+                Apacionado en Backend.
+                </p>
               <div className="flex flex-col sm:flex-row items-center gap-8">
                 <div className="w-full sm:w-1/2 space-y-2 text-center sm:text-left">
                   <h3 className="font-bold text-accent">Sistemas Escalables</h3>
-                  <p className="text-sm opacity-80">Arquitecturas listas para producción.</p>
+                  <p className="text-sm opacity-80">.</p>
                 </div>
                 <div className="w-50 h-50 lg:w-72 lg:h-72">
                   <TechSphere />
