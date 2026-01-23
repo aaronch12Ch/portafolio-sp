@@ -205,16 +205,26 @@ export default function TechSphere() {
           // Efecto de flotación
           const floatY =
             Math.sin(time * 2 + label.userData.floatOffset) * 0.05;
-          label.position.y =
-            label.userData.originalPosition.y + floatY;
+          
+          // Posición objetivo
+          let targetPosition = label.userData.originalPosition.clone();
+          targetPosition.y += floatY;
 
           // Zoom según interacción
           if (isSelected) {
+            // Mover al centro cuando está seleccionado
+            targetPosition.set(0, 0, 0);
             label.userData.targetScale = label.userData.originalScale
               .clone()
               .multiplyScalar(2.2);
             label.material.opacity = 1;
           } else if (isIntersected) {
+            // Acercar al centro en hover
+            const directionToCenter = new THREE.Vector3(0, 0, 0)
+              .sub(label.position)
+              .multiplyScalar(0.3);
+            targetPosition.add(directionToCenter);
+            
             label.userData.targetScale = label.userData.originalScale
               .clone()
               .multiplyScalar(1.5);
@@ -227,6 +237,9 @@ export default function TechSphere() {
               label.userData.originalScale.clone();
             label.material.opacity = 0.95;
           }
+
+          // Animación suave de posición
+          label.position.lerp(targetPosition, 0.1);
 
           // Animación suave de escala con efecto elástico
           label.scale.lerp(label.userData.targetScale, 0.15);
