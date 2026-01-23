@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic' 
 
 import { Navbar } from "@/components/navbar"
-import { ProjectCard } from "@/components/project-card"
+import TechSphere from "@/components/tech-sphere"
 import { AutoLogout } from "@/components/auto-logout"
 import { ProjectCarousel } from "@/components/project-carousel"
 import { WelcomeScreen } from "@/components/welcome-screen"
@@ -74,6 +74,7 @@ export default async function HomePage() {
 
               <div className="flex flex-col sm:flex-row gap-6 text-sm">
                 <div>
+                  <TechSphere />
                   <p className="font-semibold mb-1">Altamente capacitado en</p>
                   <p className="text-primary-foreground/80 flex flex-wrap items-center gap-3">
                     <span className="inline-flex items-center gap-1.5">
