@@ -87,7 +87,7 @@ export default async function HomePage() {
                 </div>
 
                 {/* Esfera */}
-                <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] bg-primary-foreground/5 rounded-lg">
+                <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px]">
                   <TechSphere />
                 </div>
               </div>

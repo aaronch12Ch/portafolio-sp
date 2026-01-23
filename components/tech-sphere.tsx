@@ -12,6 +12,7 @@ export default function TechSphere() {
     let scene: any,
       camera: any,
       renderer: any,
+      sphere: any,
       labels: any[] = [],
       raycaster: any,
       mouse: any;
@@ -32,7 +33,7 @@ export default function TechSphere() {
       "Docker",
       "AWS",
       "Git",
-      "Tailwind",
+      "Tailwind CSS",
     ];
 
     const init = async () => {
@@ -60,38 +61,32 @@ export default function TechSphere() {
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2(-999, -999);
 
-        // Crear labels con texto curveado
+        // Esfera wireframe central
+        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        const material = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.15,
+        });
+        sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Crear labels con texto RECTO y legible
         technologies.forEach((tech, index) => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d")!;
-          canvas.width = 512;
+          
+          // Canvas más grande para mejor resolución
+          canvas.width = 1024;
           canvas.height = 256;
 
-          // Texto curveado
-          ctx.font = "bold 42px Inter, Arial, sans-serif";
+          // Texto recto centrado
+          ctx.font = "bold 80px Inter, Arial, sans-serif";
           ctx.fillStyle = "#ffffff";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-
-          const centerX = canvas.width / 2;
-          const centerY = canvas.height / 2;
-          const radius = 140;
-          const angleRange = Math.PI * 0.7;
-          const startAngle = -angleRange / 2;
-
-          for (let i = 0; i < tech.length; i++) {
-            const char = tech[i];
-            const angle = startAngle + (angleRange * i) / Math.max(tech.length - 1, 1);
-
-            ctx.save();
-            ctx.translate(
-              centerX + radius * Math.sin(angle),
-              centerY - radius * Math.cos(angle) + 35
-            );
-            ctx.rotate(angle);
-            ctx.fillText(char, 0, 0);
-            ctx.restore();
-          }
+          ctx.fillText(tech, canvas.width / 2, canvas.height / 2);
 
           const texture = new THREE.CanvasTexture(canvas);
           texture.needsUpdate = true;
@@ -104,18 +99,20 @@ export default function TechSphere() {
 
           const sprite = new THREE.Sprite(material);
 
-          // Distribución Fibonacci
+          // Distribución uniforme alrededor de la esfera (Fibonacci sphere)
           const phi = Math.acos(-1 + (2 * index) / technologies.length);
           const theta = Math.sqrt(technologies.length * Math.PI) * phi;
-          const radius2 = 2.8;
+          const radius = 3.2; // Más lejos de la esfera central
 
           sprite.position.set(
-            radius2 * Math.cos(theta) * Math.sin(phi),
-            radius2 * Math.sin(theta) * Math.sin(phi),
-            radius2 * Math.cos(phi)
+            radius * Math.cos(theta) * Math.sin(phi),
+            radius * Math.sin(theta) * Math.sin(phi),
+            radius * Math.cos(phi)
           );
 
-          sprite.scale.set(2, 1, 1);
+          // Escala adaptativa según el largo del texto
+          const scale = tech.length > 8 ? 2.5 : 2;
+          sprite.scale.set(scale, 0.5, 1);
 
           sprite.userData = {
             originalScale: sprite.scale.clone(),
@@ -162,11 +159,14 @@ export default function TechSphere() {
           scene.rotation.x += (rotX - scene.rotation.x) * 0.05;
           scene.rotation.y += (rotY - scene.rotation.y) * 0.05;
 
+          // Auto-rotación más lenta
           const isMobile = window.innerWidth < 768;
-          scene.rotation.y += isMobile ? 0.004 : 0.002;
+          scene.rotation.y += isMobile ? 0.003 : 0.001;
 
+          // Limitar rotación vertical
           scene.rotation.x = Math.max(-0.5, Math.min(0.5, scene.rotation.x));
 
+          // Raycaster para detectar hover
           raycaster.setFromCamera(mouse, camera);
           const intersects = raycaster.intersectObjects(labels);
 
@@ -174,15 +174,16 @@ export default function TechSphere() {
             const isIntersected = intersects.some((i) => i.object === label);
             const isSelected = label === selectedLabel;
 
+            // Zoom según interacción
             if (isSelected) {
               label.userData.targetScale = label.userData.originalScale
                 .clone()
-                .multiplyScalar(2);
+                .multiplyScalar(1.8);
               label.material.opacity = 1;
             } else if (isIntersected) {
               label.userData.targetScale = label.userData.originalScale
                 .clone()
-                .multiplyScalar(1.4);
+                .multiplyScalar(1.3);
               label.material.opacity = 1;
               if (containerRef.current) {
                 containerRef.current.style.cursor = "pointer";
@@ -192,7 +193,10 @@ export default function TechSphere() {
               label.material.opacity = 0.9;
             }
 
+            // Animación suave de escala
             label.scale.lerp(label.userData.targetScale, 0.1);
+            
+            // CRÍTICO: Siempre mirar a la cámara para que el texto sea legible
             label.lookAt(camera.position);
           });
 
