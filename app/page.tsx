@@ -11,25 +11,6 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
-// Variantes personalizadas
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2, delayChildren: 0.3 }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    filter: "blur(0px)",
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
-  }
-}
-
 export default function HomePage() {
   const [proyectos, setProyectos] = useState<Proyecto[]>([])
 
@@ -37,142 +18,101 @@ export default function HomePage() {
     async function fetchProyectos() {
       try {
         const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos")
-        if (response.ok) {
-          const data = await response.json()
-          setProyectos(data)
-        }
-      } catch (error) {
-        console.error("Error:", error)
-      }
+        if (response.ok) setProyectos(await response.json())
+      } catch (e) { console.error(e) }
     }
     fetchProyectos()
   }, [])
 
   return (
-    <main className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth bg-background selection:bg-primary/30">
+    <main className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth bg-background">
       <WelcomeScreen />
       <AutoLogout />
       <Navbar />
 
       {/* SECCIÓN 1: INICIO */}
-      <section id="inicio" className="h-screen w-full snap-start snap-always shrink-0 overflow-hidden pt-16">
+      <section id="inicio" className="min-h-screen lg:h-screen w-full snap-start snap-always shrink-0 pt-16 lg:pt-0">
         <div className="grid lg:grid-cols-2 h-full">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
-            variants={containerVariants}
-            className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-10 flex flex-col justify-center relative"
-          >
-            <motion.div variants={itemVariants}>
-              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold mb-4 tracking-tighter italic">
-                Backend <span className="text-accent">&</span> <br /> DBA.
-              </h1>
-            </motion.div>
-            
-            <motion.p variants={itemVariants} className="text-xl sm:text-2xl text-primary-foreground/80 mb-8 max-w-lg">
-              Ingeniero en Sistemas Computacionales construyendo el futuro de las apps escalables.
-            </motion.p>
+          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-12 flex flex-col justify-center relative overflow-hidden">
+            {/* Decorativos Originales */}
+            <div className="absolute top-20 right-10 w-16 h-16 border-2 border-primary-foreground/20 rounded-lg rotate-12 animate-float" />
+            <div className="absolute bottom-10 left-10 opacity-30 lg:opacity-100">
+               <div className="grid grid-cols-3 gap-1">
+                 {[...Array(9)].map((_, i) => <div key={i} className="w-2 h-2 bg-primary-foreground/40 rounded-full" />)}
+               </div>
+            </div>
 
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
-              <div className="border-l-2 border-accent pl-4">
-                <p className="text-sm uppercase tracking-widest text-accent font-bold">Expertise</p>
-                <p className="text-sm opacity-80">Arquitecturas robustas y listas para producción.</p>
-              </div>
-              <div className="h-[250px] w-full">
-                <TechSphere />
+            <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} className="relative z-10">
+              <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-none">Backend y <br /> DBA.</h1>
+              <p className="text-lg opacity-90 mb-8 max-w-md">Ingeniero en Sistemas Computacionales construyendo experiencias excepcionales.</p>
+              <div className="flex flex-col sm:flex-row items-center gap-8">
+                <div className="w-full sm:w-1/2 space-y-2 text-center sm:text-left">
+                  <h3 className="font-bold text-accent">Sistemas Escalables</h3>
+                  <p className="text-sm opacity-80">Arquitecturas listas para producción.</p>
+                </div>
+                <div className="w-48 h-48 lg:w-64 lg:h-64">
+                  <TechSphere />
+                </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
 
-          <div className="bg-accent flex items-center justify-center relative">
+          <div className="bg-accent flex items-center justify-center p-10 relative overflow-hidden">
+            {/* Decoraciones del lado derecho */}
+            <div className="absolute top-10 right-10 flex flex-col gap-2 animate-pulse">
+               {[...Array(5)].map((_, i) => <div key={i} className="w-2 h-2 bg-accent-foreground/30 rounded-full" />)}
+            </div>
             <motion.div 
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="w-72 h-72 sm:w-96 sm:h-96 relative"
+              initial={{scale:0.8, opacity:0}} whileInView={{scale:1, opacity:1}}
+              className="w-56 h-56 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] relative z-10"
             >
-              <img
-                src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
-                alt="Profile"
-                className="w-full h-full object-cover rounded-[2rem] shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
-              />
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+              <img src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg" alt="Perfil" className="w-full h-full object-cover rounded-3xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-500" />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* SECCIÓN 2: HABILIDADES */}
-      <section id="habilidades" className="h-screen w-full snap-start snap-always shrink-0 bg-background flex items-center">
-        <div className="container mx-auto px-6">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            className="grid lg:grid-cols-2 gap-20 max-w-6xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="group p-8 rounded-3xl border border-transparent hover:border-primary/10 hover:bg-muted/50 transition-all">
-              <span className="text-5xl mb-6 block">🎨</span>
-              <h2 className="text-4xl font-bold text-primary mb-4">Design</h2>
-              <p className="text-lg text-muted-foreground">Interfaces que cuentan historias. No solo diseño píxeles, diseño soluciones para personas reales.</p>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="group p-8 rounded-3xl border border-transparent hover:border-primary/10 hover:bg-muted/50 transition-all">
-              <span className="text-5xl mb-6 block">⚙️</span>
-              <h2 className="text-4xl font-bold text-primary mb-4">Engineering</h2>
-              <p className="text-lg text-muted-foreground">Código limpio, escalable y eficiente. Mi stack está diseñado para el alto rendimiento y la seguridad.</p>
-            </motion.div>
+      {/* SECCIÓN 2: DESIGN & ENGINEERING */}
+      <section id="habilidades" className="min-h-screen lg:h-screen w-full snap-start snap-always bg-background flex items-center py-20">
+        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-24">
+          <motion.div initial={{opacity:0, x:-30}} whileInView={{opacity:1, x:0}} className="space-y-4">
+            <h2 className="text-4xl sm:text-6xl font-black text-primary italic">DESIGN</h2>
+            <p className="text-muted-foreground text-lg">Diseño interfaces que no solo se ven bien, sino que resuelven problemas reales de usuarios.</p>
+          </motion.div>
+          <motion.div initial={{opacity:0, x:30}} whileInView={{opacity:1, x:0}} className="space-y-4">
+            <h2 className="text-4xl sm:text-6xl font-black text-primary italic">ENGINEERING</h2>
+            <p className="text-muted-foreground text-lg">Código eficiente, escalable y mantenible usando el stack más moderno del mercado.</p>
           </motion.div>
         </div>
       </section>
 
       {/* SECCIÓN 3: PROYECTOS */}
-      <section id="proyectos" className="h-screen w-full snap-start snap-always shrink-0 bg-primary text-primary-foreground flex items-center overflow-hidden">
-        <div className="container px-6 relative z-10 w-full">
-          <motion.div 
-            initial={{ x: -100, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl mb-12"
-          >
-            <h2 className="text-5xl lg:text-7xl font-black mb-4 uppercase tracking-tighter">Proyectos Seleccionados</h2>
-            <div className="h-1 w-24 bg-accent" />
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full"
-          >
-            {proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}
-          </motion.div>
+      <section id="proyectos" className="min-h-screen lg:h-screen w-full snap-start snap-always bg-primary text-primary-foreground flex items-center py-20 overflow-hidden">
+        <div className="container px-6 mx-auto">
+          <motion.h2 initial={{opacity:0}} whileInView={{opacity:1}} className="text-4xl sm:text-7xl font-bold mb-12 tracking-tighter">MIS PROYECTOS</motion.h2>
+          <div className="w-full">{proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}</div>
         </div>
       </section>
 
-      {/* SECCIÓN 4: CONTACTO */}
-      <section id="contacto" className="h-screen w-full snap-start snap-always shrink-0 bg-background flex flex-col">
-        <div className="flex-grow flex items-center justify-center">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            className="container px-6 text-center"
-          >
-            <motion.h2 variants={itemVariants} className="text-5xl md:text-8xl font-black mb-12 tracking-tighter">¿TRABAJAMOS?</motion.h2>
-            <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-6">
-              <Link href="/" className="px-10 py-4 bg-primary text-primary-foreground rounded-full font-bold hover:bg-primary/90 transition-all flex items-center gap-2 group">
-                Ver Trabajo <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+      {/* SECCIÓN 4: CIERRE */}
+      <section id="contacto" className="min-h-screen lg:h-screen w-full snap-start snap-always bg-background flex flex-col justify-between">
+        <div className="flex-grow flex items-center">
+          <div className="container px-6 mx-auto grid md:grid-cols-2 gap-16">
+            <motion.div initial={{y:30, opacity:0}} whileInView={{y:0, opacity:1}}>
+              <h2 className="text-3xl font-bold text-primary mb-4">Construyo & Diseño</h2>
+              <p className="text-muted-foreground mb-6">Disponible para proyectos freelance y colaboraciones open source.</p>
+              <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
+                Ver Trabajo <ArrowRight />
               </Link>
             </motion.div>
-          </motion.div>
+            <motion.div initial={{y:30, opacity:0}} whileInView={{y:0, opacity:1}} transition={{delay:0.2}}>
+              <h2 className="text-3xl font-bold text-primary mb-4">Liderazgo Técnico</h2>
+              <p className="text-muted-foreground">Enfocado en apoyar equipos y dar soluciones eficientes a problemas complejos.</p>
+            </motion.div>
+          </div>
         </div>
-        
-        <footer className="py-8 bg-muted/30">
-          <p className="text-center text-sm text-muted-foreground font-medium">
-            AARÓN CÓRDOVA HERNÁNDEZ — {new Date().getFullYear()} — HECHO CON NEXT.JS
-          </p>
+        <footer className="py-10 border-t text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} Aarón Córdova Hernández.
         </footer>
       </section>
     </main>
