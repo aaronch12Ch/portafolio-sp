@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic' 
+"use client"
 
 import { Navbar } from "@/components/navbar"
 import TechSphere from "@/components/tech-sphere"
@@ -8,244 +8,173 @@ import { WelcomeScreen } from "@/components/welcome-screen"
 import type { Proyecto } from "@/lib/api"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 
-
-
-async function getProyectos(): Promise<Proyecto[]> {
-  try {
-    const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos", {
-      cache: "no-store",
-
-    })
-
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: No se pudieron obtener los proyectos.`);
-    }
-
-    return response.json() as Promise<Proyecto[]>
-  } catch (error) {
-    console.error("[v0] Error fetching proyectos:", error)
-    return []
+// Variantes personalizadas
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2, delayChildren: 0.3 }
   }
 }
 
-export default async function HomePage() {
-  const proyectos = await getProyectos()
-  
-  
+const itemVariants = {
+  hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
+  }
+}
+
+export default function HomePage() {
+  const [proyectos, setProyectos] = useState<Proyecto[]>([])
+
+  useEffect(() => {
+    async function fetchProyectos() {
+      try {
+        const response = await fetch("https://portafolio-1-q45o.onrender.com/api/proyectos/todos")
+        if (response.ok) {
+          const data = await response.json()
+          setProyectos(data)
+        }
+      } catch (error) {
+        console.error("Error:", error)
+      }
+    }
+    fetchProyectos()
+  }, [])
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth bg-background selection:bg-primary/30">
       <WelcomeScreen />
       <AutoLogout />
       <Navbar />
 
-      <section className="relative overflow-hidden  min-h-screen">
+      {/* SECCIÓN 1: INICIO */}
+      <section id="inicio" className="h-screen w-full snap-start snap-always shrink-0 overflow-hidden pt-16">
         <div className="grid lg:grid-cols-2 h-full">
-          {/* Lado izquierdo - Morado */}
-          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-10 sm:py-14 flex flex-col justify-center lg:justify-center relative overflow-hidden">
-            {/* Cuadrado flotante */}
-            <div className="absolute top-20 right-10 w-20 h-20 border-2 border-primary-foreground/20 rounded-lg rotate-12 animate-float" />
-            
-            {/* Grid de puntos con rebote */}
-            <div className="absolute bottom-[100px] left-10 w-16 h-16 animate-bounce-slow">
-              <div className="grid grid-cols-3 gap-1">
-                {[...Array(9)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className="w-2 h-2 bg-primary-foreground/30 rounded-full animate-pulse"
-                    style={{ animationDelay: `${i * 0.1}s` }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="relative z-10 max-w-xl">
-              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold mb-2 leading-[1.1]">
-                Backend y
-                <br />
-                DBA.
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.3 }}
+            variants={containerVariants}
+            className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-10 flex flex-col justify-center relative"
+          >
+            <motion.div variants={itemVariants}>
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold mb-4 tracking-tighter italic">
+                Backend <span className="text-accent">&</span> <br /> DBA.
               </h1>
-              <p className="text-lg sm:text-xl text-primary-foreground/90 mb-3 leading-relaxed">
-                Ingeniero en Sistemas Computacionales.
-                <br />
-                Construyo productos digitales escalables con experiencias de usuario excepcionales.
-              </p>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                {/* Texto */}
-                <div className="space-y-2 text-center lg:text-left">
-
-                  <h3 className="text-lg sm:text-xl font-semibold leading-snug">
-                    Altamente capacitado en tecnologías modernas
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-primary-foreground/80 max-w-md mx-auto lg:mx-0 leading-relaxed">
-                    Desarrollo backend y frontend con arquitecturas escalables, seguras y
-                    listas para producción usando herramientas actuales del ecosistema web.
-                  </p>
-                </div>
-
-                {/* Esfera */}
-                <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px]">
-                  <TechSphere />
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Lado derecho - Verde lima con foto */}
-          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-10 sm:py-14 flex items-center justify-center relative overflow-hidden">
-            {/* Blob líquido con morphing extremo */}
-            <div className="absolute top-16 right-16 w-32 h-32 bg-gradient-to-br from-accent-foreground/20 to-accent-foreground/5 animate-liquid-morph blur-2xl" />
+            </motion.div>
             
-           {/* Línea con efecto shimmer neón - MÁS ARRIBA en móvil */}
-            <div className="absolute top-10 sm:top-20 right-4 sm:right-16 w-16 sm:w-24 h-0.5 bg-accent-foreground/30 animate-shimmer" />
+            <motion.p variants={itemVariants} className="text-xl sm:text-2xl text-primary-foreground/80 mb-8 max-w-lg">
+              Ingeniero en Sistemas Computacionales construyendo el futuro de las apps escalables.
+            </motion.p>
 
-            {/* Puntos con efecto glitch - MÁS ARRIBA en móvil */}
-            <div className="absolute top-14 sm:top-24 right-4 sm:right-16 animate-glitch">
-              {[...Array(5)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className="w-1.5 h-1.5 bg-accent-foreground/40 rounded-full mb-2 animate-neon-pulse"
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                />
-              ))}
-            </div>
-
-            {/* Cuadrado con efecto magnético 3D - MÁS ABAJO en móvil */}
-            <div className="absolute bottom-16 sm:bottom-32 right-4 sm:right-20 w-8 h-8 sm:w-14 sm:h-14 border-2 border-accent-foreground/30 animate-magnetic-pull backdrop-blur-sm bg-accent-foreground/5" 
-                style={{ 
-                  boxShadow: '0 0 20px rgba(var(--accent-foreground), 0.3)',
-                  transformStyle: 'preserve-3d'
-                }} 
-            />
-            
-            {/* Elemento flotante en 3D con parallax */}
-            <div className="absolute top-1/3 left-16 w-16 h-16 bg-gradient-to-br from-accent-foreground/10 to-transparent rounded-full animate-parallax-float blur-md" />
-
-            <div className="relative">
-              {/* Múltiples capas de glow con colores */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-accent-foreground/30 via-accent-foreground/10 to-accent-foreground/30 rounded-2xl blur-3xl animate-pulse" />
-              <div className="absolute -inset-2 bg-accent-foreground/20 rounded-2xl blur-2xl animate-neon-pulse" />
-              
-              <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 relative group animate-float-3d">
-                <img
-                  src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-2xl shadow-2xl relative z-10 transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
-                  style={{
-                    boxShadow: '0 20px 60px -10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(var(--accent-foreground), 0.2)'
-                  }}
-                />
-                
-                {/* Overlay con efecto holográfico al hover */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-accent-foreground/0 via-accent-foreground/10 to-accent-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+              <div className="border-l-2 border-accent pl-4">
+                <p className="text-sm uppercase tracking-widest text-accent font-bold">Expertise</p>
+                <p className="text-sm opacity-80">Arquitecturas robustas y listas para producción.</p>
               </div>
-            </div>
+              <div className="h-[250px] w-full">
+                <TechSphere />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          <div className="bg-accent flex items-center justify-center relative">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="w-72 h-72 sm:w-96 sm:h-96 relative"
+            >
+              <img
+                src="https://portafoliovideo.s3.us-east-1.amazonaws.com/videos/perfil.jpg"
+                alt="Profile"
+                className="w-full h-full object-cover rounded-[2rem] shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+              />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      <section className="bg-background py-20 lg:py-32">
-        <div className="container mx-auto px-6 sm:px-12 lg:px-20">
-          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 max-w-6xl mx-auto">
-            <div className="relative">
-              <div className="absolute -top-8 -left-4">
-                <div className="flex gap-2">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-2 h-2 bg-primary/30 rounded-full" />
-                  ))}
-                </div>
-              </div>
-              <h2 className="text-4xl sm:text-5xl font-bold text-primary mb-6">Design</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Me apasiona crear interfaces intuitivas y atractivas. Diseño experiencias que no solo se ven bien, sino
-                que resuelven problemas reales y mejoran la vida de los usuarios.
-              </p>
-            </div>
+      {/* SECCIÓN 2: HABILIDADES */}
+      <section id="habilidades" className="h-screen w-full snap-start snap-always shrink-0 bg-background flex items-center">
+        <div className="container mx-auto px-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            className="grid lg:grid-cols-2 gap-20 max-w-6xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="group p-8 rounded-3xl border border-transparent hover:border-primary/10 hover:bg-muted/50 transition-all">
+              <span className="text-5xl mb-6 block">🎨</span>
+              <h2 className="text-4xl font-bold text-primary mb-4">Design</h2>
+              <p className="text-lg text-muted-foreground">Interfaces que cuentan historias. No solo diseño píxeles, diseño soluciones para personas reales.</p>
+            </motion.div>
 
-            <div className="relative">
-              <div className="absolute -top-8 -right-4">
-                <div className="grid grid-cols-3 gap-2">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="w-2 h-2 bg-accent/40 rounded-full" />
-                  ))}
-                </div>
-              </div>
-              <h2 className="text-4xl sm:text-5xl font-bold text-primary mb-6">Engineering</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                En la construcción de aplicaciones, estoy equipado con las herramientas adecuadas y resuelvo problemas
-                técnicamente de manera eficiente, escalable y mantenible.
-              </p>
-            </div>
-          </div>
+            <motion.div variants={itemVariants} className="group p-8 rounded-3xl border border-transparent hover:border-primary/10 hover:bg-muted/50 transition-all">
+              <span className="text-5xl mb-6 block">⚙️</span>
+              <h2 className="text-4xl font-bold text-primary mb-4">Engineering</h2>
+              <p className="text-lg text-muted-foreground">Código limpio, escalable y eficiente. Mi stack está diseñado para el alto rendimiento y la seguridad.</p>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="bg-primary text-primary-foreground py-20 lg:py-32 relative overflow-hidden">
-        {/* Elementos decorativos */}
-        <div className="absolute  left-10 w-32 h-32 border border-primary-foreground/10 rounded-full" />
-        <div className="absolute bottom-20 right-10 w-40 h-40 border border-primary-foreground/10 rounded-full" />
+      {/* SECCIÓN 3: PROYECTOS */}
+      <section id="proyectos" className="h-screen w-full snap-start snap-always shrink-0 bg-primary text-primary-foreground flex items-center overflow-hidden">
+        <div className="container px-6 relative z-10 w-full">
+          <motion.div 
+            initial={{ x: -100, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl mb-12"
+          >
+            <h2 className="text-5xl lg:text-7xl font-black mb-4 uppercase tracking-tighter">Proyectos Seleccionados</h2>
+            <div className="h-1 w-24 bg-accent" />
+          </motion.div>
 
-        <div className="container mx-h-[100vh] px-6 sm:px-12 lg:px-20 relative z-10">
-          <div className="max-w-3xl mb-16">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">Mis Proyectos</h2>
-            <p className="text-xl text-primary-foreground/90 leading-relaxed">
-              He trabajado en diversos proyectos que demuestran mi capacidad para crear soluciones digitales completas,
-              desde el diseño hasta la implementación.
-            </p>
-          </div>
-
-          {proyectos.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-primary-foreground/70 text-lg">No hay proyectos disponibles</p>
-            </div>
-          )}
-
-          {proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full"
+          >
+            {proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}
+          </motion.div>
         </div>
       </section>
 
-      <section className="bg-background py-20 lg:py-32">
-        <div className="container mx-auto px-6 sm:px-12 lg:px-20">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Construyo & diseño </h2>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Proyectos open source, aplicaciones web, herramientas útiles y aplicaciones híbridas.
-                </p>
-                <Link
-                  href="/"
-                  >
-                  <span className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all">
-                  Ver mi trabajo <ArrowRight className="w-5 h-5" />
-                </span>
-                </Link>
-              </div>
-
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Me gusta aprender</h2>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Con ganas de aprender y enseñar. Un gran líder que apoya a su equipo y da solución a problemas.
-                </p>
-               
-              </div>
-            </div>
-          </div>
+      {/* SECCIÓN 4: CONTACTO */}
+      <section id="contacto" className="h-screen w-full snap-start snap-always shrink-0 bg-background flex flex-col">
+        <div className="flex-grow flex items-center justify-center">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            className="container px-6 text-center"
+          >
+            <motion.h2 variants={itemVariants} className="text-5xl md:text-8xl font-black mb-12 tracking-tighter">¿TRABAJAMOS?</motion.h2>
+            <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-6">
+              <Link href="/" className="px-10 py-4 bg-primary text-primary-foreground rounded-full font-bold hover:bg-primary/90 transition-all flex items-center gap-2 group">
+                Ver Trabajo <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto px-6 sm:px-12 lg:px-20">
-          <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Portfolio. Todos los derechos reservados Aarón Córdova Hernández.
+        
+        <footer className="py-8 bg-muted/30">
+          <p className="text-center text-sm text-muted-foreground font-medium">
+            AARÓN CÓRDOVA HERNÁNDEZ — {new Date().getFullYear()} — HECHO CON NEXT.JS
           </p>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </section>
+    </main>
   )
 }
