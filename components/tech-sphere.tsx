@@ -41,14 +41,19 @@ export default function TechSphere() {
 
       scene = new THREE.Scene();
 
+      const aspect = containerRef.current!.clientWidth /
+          containerRef.current!.clientHeight;
+      
+      // Ajustar FOV según el aspect ratio
+      const fov = aspect > 1 ? 75 : 60;
+      
       camera = new THREE.PerspectiveCamera(
-        60,
-        containerRef.current!.clientWidth /
-          containerRef.current!.clientHeight,
+        fov,
+        aspect,
         0.1,
         1000
       );
-      camera.position.z = 6;
+      camera.position.z = aspect > 1 ? 7 : 6;
 
       renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -263,14 +268,18 @@ export default function TechSphere() {
       animate();
 
       const onResize = () => {
-        camera.aspect =
-          containerRef.current!.clientWidth /
-          containerRef.current!.clientHeight;
+        const w = containerRef.current!.clientWidth;
+        const h = containerRef.current!.clientHeight;
+        const aspect = w / h;
+        
+        camera.aspect = aspect;
+        
+        // Ajustar FOV y posición al redimensionar
+        camera.fov = aspect > 1 ? 75 : 60;
+        camera.position.z = aspect > 1 ? 7 : 6;
+        
         camera.updateProjectionMatrix();
-        renderer.setSize(
-          containerRef.current!.clientWidth,
-          containerRef.current!.clientHeight
-        );
+        renderer.setSize(w, h);
       };
 
       window.addEventListener("resize", onResize);
