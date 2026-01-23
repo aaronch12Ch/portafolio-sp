@@ -123,7 +123,7 @@ export default function TechSphere() {
         const theta = Math.sqrt(technologies.length * Math.PI) * phi;
 
         const isMobile = window.innerWidth < 768;
-        const radius = isMobile ? 2.1 : 2.8;
+        const radius = isMobile ? 2.6 : 3.0;
 
         sprite.position.set(
           radius * Math.cos(theta) * Math.sin(phi),
@@ -131,7 +131,7 @@ export default function TechSphere() {
           radius * Math.cos(phi)
         );
 
-        const baseScale = isMobile ? 1.4 : 1.8;
+        const baseScale = isMobile ? 1.8 : 2.0;
         sprite.scale.set(baseScale, baseScale * 0.25, 1);
 
         sprite.userData = {
@@ -203,7 +203,7 @@ export default function TechSphere() {
             targetPosition.set(0, 0, 0);
             label.userData.targetScale = label.userData.originalScale
               .clone()
-              .multiplyScalar(2);
+              .multiplyScalar(2.2);
           } else {
             label.userData.targetScale =
               label.userData.originalScale.clone();
