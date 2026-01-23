@@ -40,10 +40,10 @@ export default async function HomePage() {
       <AutoLogout />
       <Navbar />
 
-      <section className="relative overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-[100vh]">
+      <section className="relative overflow-hidden  min-h-screen">
+        <div className="grid lg:grid-cols-2 h-full">
           {/* Lado izquierdo - Morado */}
-          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex flex-col justify-center relative overflow-hidden">
+          <div className="bg-primary text-primary-foreground px-6 sm:px-12 lg:px-20 py-10 sm:py-14 flex flex-col justify-center lg:justify-center relative overflow-hidden">
             {/* Cuadrado flotante */}
             <div className="absolute top-20 right-10 w-20 h-20 border-2 border-primary-foreground/20 rounded-lg rotate-12 animate-float" />
             
@@ -62,7 +62,7 @@ export default async function HomePage() {
 
             <div className="relative z-10 max-w-xl">
               <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                Backen y
+                Backend y
                 <br />
                 DBA.
               </h1>
@@ -110,7 +110,7 @@ export default async function HomePage() {
           </div>
 
           {/* Lado derecho - Verde lima con foto */}
-          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
+          <div className="bg-accent text-accent-foreground px-6 sm:px-12 lg:px-20 py-10 sm:py-14 flex items-center justify-center relative overflow-hidden">
             {/* Blob líquido con morphing extremo */}
             <div className="absolute top-16 right-16 w-32 h-32 bg-gradient-to-br from-accent-foreground/20 to-accent-foreground/5 animate-liquid-morph blur-2xl" />
             

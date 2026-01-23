@@ -152,7 +152,8 @@ export default function TechSphere() {
   }, []);
 
   return (
-    <div className="relative w-full h-[600px] bg-transparent overflow-hidden">
+    <div className="relative w-full h-full bg-transparent overflow-hidden">
+
       <div ref={containerRef} className="w-full h-full" />
 
       {!isLoaded && (
