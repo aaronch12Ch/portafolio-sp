@@ -56,8 +56,11 @@ export default function TechSphere() {
         containerRef.current!.clientHeight
       );
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setClearColor(0x000000, 0); // transparente
+      renderer.setClearColor(0x000000, 0);
       containerRef.current!.appendChild(renderer.domElement);
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
 
       // Crear labels
       technologies.forEach((tech, index) => {
@@ -66,26 +69,41 @@ export default function TechSphere() {
         canvas.width = 512;
         canvas.height = 128;
 
+        // ---- TEXTO CURVEADO ----
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = "bold 48px Arial";
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(tech, canvas.width / 2, canvas.height / 2);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2 + 20;
+        const radiusText = 220;
+
+        const chars = tech.split("");
+        const angleStep = Math.PI / (chars.length * 2);
+
+        chars.forEach((char, i) => {
+          const angle = -angleStep * (chars.length / 2) + i * angleStep;
+
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(angle);
+          ctx.fillText(char, 0, -radiusText);
+          ctx.restore();
+        });
 
         const texture = new THREE.CanvasTexture(canvas);
 
         const material = new THREE.SpriteMaterial({
           map: texture,
           transparent: true,
-          opacity: 0.95,
+          opacity: 0.75,
         });
 
         const sprite = new THREE.Sprite(material);
 
-        // distribución esfera
         const phi = Math.acos(-1 + (2 * index) / technologies.length);
         const theta = Math.sqrt(technologies.length * Math.PI) * phi;
-
         const radius = 2.6;
 
         sprite.position.set(
@@ -103,22 +121,35 @@ export default function TechSphere() {
       setIsLoaded(true);
 
       const onMouseMove = (e: MouseEvent) => {
-        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+        mouseX = mouse.x;
+        mouseY = mouse.y;
       };
 
       const onTouchMove = (e: TouchEvent) => {
         if (!e.touches.length) return;
+        const t = e.touches[0];
 
-        const touch = e.touches[0];
-        mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(touch.clientY / window.innerHeight) * 2 + 1;
+        mouse.x = (t.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(t.clientY / window.innerHeight) * 2 + 1;
+
+        mouseX = mouse.x;
+        mouseY = mouse.y;
       };
 
+      const onTouchStart = (e: TouchEvent) => {
+        if (!e.touches.length) return;
+        const t = e.touches[0];
+
+        mouse.x = (t.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(t.clientY / window.innerHeight) * 2 + 1;
+      };
 
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("touchmove", onTouchMove, { passive: true });
-
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
 
       const animate = () => {
         requestAnimationFrame(animate);
@@ -129,14 +160,31 @@ export default function TechSphere() {
         scene.rotation.x += (rotX - scene.rotation.x) * 0.05;
         scene.rotation.y += (rotY - scene.rotation.y) * 0.05;
 
-        // auto rotación
         const isMobile = window.innerWidth < 768;
         scene.rotation.y += isMobile ? 0.006 : 0.002;
 
         scene.rotation.x = Math.max(-0.6, Math.min(0.6, scene.rotation.x));
 
+        // ---- HOVER ZOOM ----
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(labels);
 
-        labels.forEach((l) => l.lookAt(camera.position));
+        labels.forEach((label: any) => {
+          const isHover = intersects.find(i => i.object === label);
+
+          const targetScale = isHover ? 2.4 : 1.8;
+          const targetOpacity = isHover ? 1 : 0.75;
+
+          label.scale.lerp(
+            new THREE.Vector3(targetScale, targetScale * 0.25, 1),
+            0.1
+          );
+
+          label.material.opacity +=
+            (targetOpacity - label.material.opacity) * 0.1;
+
+          label.lookAt(camera.position);
+        });
 
         renderer.render(scene, camera);
       };
@@ -147,6 +195,7 @@ export default function TechSphere() {
         camera.aspect =
           containerRef.current!.clientWidth /
           containerRef.current!.clientHeight;
+
         camera.updateProjectionMatrix();
         renderer.setSize(
           containerRef.current!.clientWidth,
@@ -159,7 +208,7 @@ export default function TechSphere() {
       return () => {
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("touchmove", onTouchMove);
-
+        window.removeEventListener("touchstart", onTouchStart);
         window.removeEventListener("resize", onResize);
         renderer.dispose();
       };
@@ -170,7 +219,6 @@ export default function TechSphere() {
 
   return (
     <div className="relative w-full h-full bg-transparent overflow-hidden">
-
       <div ref={containerRef} className="w-full h-full" />
 
       {!isLoaded && (
