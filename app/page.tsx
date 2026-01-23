@@ -74,22 +74,8 @@ export default async function HomePage() {
 
               <div className="flex flex-col sm:flex-row gap-6 text-sm">
                 <div>
-                  <TechSphere />
                   <p className="font-semibold mb-1">Altamente capacitado en</p>
-                  <p className="text-primary-foreground/80 flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/250px-Microsoft_.NET_logo.svg.png" alt=".NET" className="w-5 h-5" />
-                      .Net Framework
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <img src="https://cdn.prod.website-files.com/67fac9d3cef29caba89efb12/6808ba55642a765e2d9cafe4_6750447c4ddf4c46d51a2754_Destination_SQLServer-Logo-C.svg" alt="SQL" className="w-5 h-5" />
-                      SQL Server
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <img src="https://miro.medium.com/v2/0*ECSTIoPsM7Ccbh1L.png" alt="Spring" className="w-5 h-5" />
-                      Spring Boot
-                    </span>
-                  </p>
+                  <TechSphere />
                 </div>
                 <div>
                   <p className="font-semibold mb-1">Desarrollo base de datos y backend</p>
