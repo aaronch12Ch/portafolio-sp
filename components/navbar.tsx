@@ -103,7 +103,7 @@ export function Navbar() {
               {user ? (
                 <div className="flex flex-col items-center gap-4 w-full">
                    <p className="text-gray-500 font-medium">Hola, {user.username}</p>
-                   <Button onClick={handleLogout} variant="outline" className="w-full h-16 text-xl border-2 border-black text-black">
+                   <Button onClick={handleLogout} variant="outline" className="w-full h-16 text-xl border-2 border-primary text-white">
                      Cerrar Sesión
                    </Button>
                 </div>
