@@ -91,7 +91,13 @@ export default function HomePage() {
       {/* SECCIÓN 3: PROYECTOS */}
       <section id="proyectos" className="min-h-screen lg:h-screen w-full snap-start snap-always bg-primary text-primary-foreground flex items-center py-14 overflow-hidden">
         <div className="container px-6 mx-auto">
-          <motion.h2 initial={{opacity:0}} whileInView={{opacity:1}} className="text-4xl sm:text-5xl font-bold mt-8 mb-2 tracking-tighter">MIS PROYECTOS</motion.h2>
+          <motion.h2 
+            initial={{ opacity: 0 }} 
+            whileInView={{ opacity: 1 }} 
+            className="text-4xl sm:text-5xl font-bold mt-2 mb-4 sm:mt-8 sm:mb-2 tracking-tighter"
+          >
+            MIS PROYECTOS
+          </motion.h2>
           <div className="w-full">{proyectos.length > 0 && <ProjectCarousel proyectos={proyectos} />}</div>
         </div>
       </section>
