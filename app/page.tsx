@@ -94,7 +94,8 @@ export default function HomePage() {
           <motion.h2 
             initial={{ opacity: 0 }} 
             whileInView={{ opacity: 1 }} 
-            className="text-4xl sm:text-5xl font-bold mt-2 mb-4 sm:mt-8 sm:mb-2 tracking-tighter"
+            /* mt-0 para pegarlo arriba en móvil, sm:mt-8 para separarlo en PC */
+            className="text-4xl sm:text-5xl font-bold mt-0 sm:mt-8 mb-4 sm:mb-2 tracking-tighter"
           >
             MIS PROYECTOS
           </motion.h2>
