@@ -46,7 +46,7 @@ export default function HomePage() {
               <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-none">Backend y <br /> DBA.</h1>
               <p className="text-lg opacity-90 mb-8 max-w-md">Ingeniero en Sistemas Computacionales.
                 <br/>
-                Apacionado en Backend.
+                Apasionado en Backend.
                 </p>
               <div className="flex flex-col sm:flex-row items-center gap-8">
                 <div className="w-full sm:w-1/2 space-y-2 text-center sm:text-left">
