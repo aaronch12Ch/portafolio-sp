@@ -6,7 +6,7 @@ import { AutoLogout } from "@/components/auto-logout"
 import { ProjectCarousel } from "@/components/project-carousel"
 import { WelcomeScreen } from "@/components/welcome-screen"
 import type { Proyecto } from "@/lib/api"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight ,Phone} from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -107,6 +107,10 @@ export default function HomePage() {
               <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
                 Ver Trabajo <ArrowRight />
               </Link>
+              <p className="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
+                <Phone /> 5570739258
+              </p>
+              
             </motion.div>
             <motion.div initial={{y:30, opacity:0}} whileInView={{y:0, opacity:1}} transition={{delay:0.2}}>
               <h2 className="text-3xl font-bold text-primary mb-4">Liderazgo Técnico</h2>
