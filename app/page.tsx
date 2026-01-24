@@ -51,7 +51,7 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row items-center gap-8">
                 <div className="w-full sm:w-1/2 space-y-2 text-center sm:text-left">
                   <h3 className="font-bold text-accent">Sistemas Escalables</h3>
-                  <p className="text-sm opacity-80">.</p>
+                  <p className="text-sm opacity-80">Tecnologías utilizadas:</p>
                 </div>
                 <div className="w-70 h-70 lg:w-90 lg:h-90">
                   <TechSphere />
