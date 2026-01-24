@@ -44,9 +44,9 @@ export function Navbar() {
           <button onClick={() => scrollToSection('proyectos')} className="text-sm font-medium hover:text-primary transition-colors">Proyectos</button>
           <button onClick={() => scrollToSection('contacto')} className="text-sm font-medium hover:text-primary transition-colors">Contacto</button>
           {user ? (
-            <Button onClick={handleLogout} variant="outline" size="sm" className="text-black border-black">Salir</Button>
+            <Button onClick={handleLogout} variant="outline" size="sm" className="text-white bg-primary">Salir</Button>
           ) : (
-            <Button asChild size="sm" className="rounded-full bg-black text-white"><Link href="/login">Ingresar</Link></Button>
+            <Button asChild size="sm" className="rounded-full bg-primary text-white"><Link href="/login">Ingresar</Link></Button>
           )}
         </div>
 
@@ -73,27 +73,27 @@ export function Navbar() {
             <div className="flex flex-col gap-10 items-center w-full px-10">
               <button
                 onClick={() => scrollToSection('inicio')}
-                className="flex items-center gap-4 text-4xl font-black text-black"
+                className="flex items-center gap-4 text-4xl font-black text-primary"
               >
                 <User className="h-8 w-8 text-primary" /> Inicio
               </button>
               
               <button
                 onClick={() => scrollToSection('habilidades')}
-                className="flex items-center gap-4 text-4xl font-black text-black"
+                className="flex items-center gap-4 text-4xl font-black text-primary"
               >
                 <Code className="h-8 w-8 text-primary" /> Habilidades
               </button>
 
               <button
                 onClick={() => scrollToSection('proyectos')}
-                className="flex items-center gap-4 text-4xl font-black text-black"
+                className="flex items-center gap-4 text-4xl font-black text-primary"
               >
                 <FolderRoot className="h-8 w-8 text-primary" /> Proyectos
               </button>
               <button
                 onClick={() => scrollToSection('contacto')}
-                className="flex items-center gap-4 text-4xl font-black text-black"
+                className="flex items-center gap-4 text-4xl font-black text-primary"
               >
                 <MessageCircle className="h-8 w-8 text-primary" /> Contacto
               </button>
@@ -108,7 +108,7 @@ export function Navbar() {
                    </Button>
                 </div>
               ) : (
-                <Button asChild className="w-full h-16 text-xl bg-black text-white rounded-2xl shadow-xl">
+                <Button asChild className="w-full h-16 text-xl bg-primary text-white rounded-2xl shadow-xl">
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
                 </Button>
               )}
