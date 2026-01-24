@@ -103,10 +103,23 @@ export default function HomePage() {
             <motion.div initial={{y:30, opacity:0}} whileInView={{y:0, opacity:1}}>
               <h2 className="text-3xl font-bold text-primary mb-4">Construyo & Diseño</h2>
               <p className="text-muted-foreground mb-6">Disponible para proyectos freelance y colaboraciones open source.</p>
-              <ol className="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
-                <li><Phone /> 5570739258</li>
-                <li><Mails />aron2014123456@gmail.com</li>
-                <li><Linkedin />www.linkedin.com/in/aarón-córdova-hernández-a317661ba</li>
+              <ol className="flex flex-col gap-4 text-primary font-bold transition-all">
+                <li className="flex items-center gap-3 hover:translate-x-2 transition-transform">
+                  <Phone className="w-5 h-5" /> 
+                  <span>5570739258</span>
+                </li>
+                
+                <li className="flex items-center gap-3 hover:translate-x-2 transition-transform">
+                  <Mails className="w-5 h-5" /> 
+                  <span className="break-all">aron2014123456@gmail.com</span>
+                </li>
+                
+                <li className="flex items-center gap-3 hover:translate-x-2 transition-transform">
+                  <Linkedin className="w-5 h-5" /> 
+                  <a href="https://www.linkedin.com/in/aarón-córdova-hernández-a317661ba" target="_blank" className="break-all hover:underline">
+                    LinkedIn Perfil
+                  </a>
+                </li>
               </ol>
               
             </motion.div>
